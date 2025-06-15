@@ -1,0 +1,23 @@
+{
+  "name": "@rbxts/test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rimraf out && rbxtsc"
+  },
+  "files": [
+    "out",
+    "!**/*.tsbuildinfo"
+  ],
+  "dependencies": {
+    "@rbxts/jecs": "^0.6.1"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.858",
+    "rbxts-transformer-jecs": "workspace:^",
+    "rimraf": "^6.0.1",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.8.3"
+  }
+}

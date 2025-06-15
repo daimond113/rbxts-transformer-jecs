@@ -1,0 +1,33 @@
+{
+  "name": "rbxts-transformer-jecs",
+  "version": "0.0.1",
+  "description": "A transformer for roblox-ts to automatically cache Jecs queries",
+  "main": "out/index.js",
+  "type": "module",
+  "author": "daimond113 <contact@daimond113.com> (https://www.daimond113.com)",
+  "license": "MIT",
+  "repository": "https://github.com/daimond113/rbxts-transformer-jecs",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "pnpm build && cd test && pnpm build"
+  },
+  "files": [
+    "out"
+  ],
+  "peerDependencies": {
+    "@rbxts/jecs": "^0.6.1",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/ts-expose-internals": "npm:ts-expose-internals@5.6.3",
+    "@eslint/js": "^9.29.0",
+    "@types/node": "^24.0.1",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "jiti": "^2.4.2",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.34.0"
+  }
+}
