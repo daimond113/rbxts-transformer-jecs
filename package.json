@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "pnpm build && cd test && pnpm build"
+    "test": "pnpm build && cd test && pnpm build",
+    "prepare": "pnpm build"
   },
   "files": [
     "out"
