@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@rbxts/jecs':
-        specifier: ^0.6.1
+        specifier: 0.6.x || 0.7.x || 0.8.x
         version: 0.6.1
       typescript:
         specifier: ^5.8.3

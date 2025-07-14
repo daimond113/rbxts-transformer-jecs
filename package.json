@@ -17,7 +17,7 @@
     "out"
   ],
   "peerDependencies": {
-    "@rbxts/jecs": "^0.6.1",
+    "@rbxts/jecs": "0.6.x || 0.7.x || 0.8.x",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
