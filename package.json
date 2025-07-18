@@ -1,6 +1,6 @@
 {
   "name": "rbxts-transformer-jecs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A transformer for roblox-ts to automatically cache Jecs queries",
   "main": "out/index.js",
   "type": "module",
