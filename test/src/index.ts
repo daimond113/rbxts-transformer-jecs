@@ -24,7 +24,7 @@ export const system = () => {
 	for (const [,] of world.query(P)) {
 	}
 
-	for (const [,] of world.query(pair(A, B))) {
+	for (const [, { __brand }] of world.query(pair(A, P))) {
 	}
 	for (const [,] of world.query(pair(A, D))) {
 	}
@@ -53,7 +53,7 @@ export const worldSystem = ({ world }: { world: _world }) => {
 		print(data.__brand)
 	}
 
-	for (const [,] of world.query(pair(A, B))) {
+	for (const [, { __brand }] of world.query(pair(A, P))) {
 	}
 	for (const [,] of world.query(pair(A, D))) {
 	}

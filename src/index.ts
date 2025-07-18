@@ -181,34 +181,42 @@ const transformerInner = (
 	if (queryMap.size > 0) {
 		for (const [world, queries] of queryMap) {
 			const worldScopeInfo = worldGlobality.get(world)
+
+			const jecsType = (name: string, ...args: ts.TypeNode[]) =>
+				ts.factory.createImportTypeNode(
+					ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(jecsPackage)),
+					undefined,
+					ts.factory.createIdentifier(name),
+					args,
+					false,
+				)
+
 			const localDecls = queries.map(({ node, name, components }) =>
 				ts.factory.createVariableDeclaration(
 					name,
 					undefined,
-					ts.factory.createImportTypeNode(
-						ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(jecsPackage)),
-						undefined,
-						ts.factory.createIdentifier("CachedQuery"),
-						[
-							ts.factory.createTupleTypeNode(
-								components.map((ct) =>
-									ts.factory.createImportTypeNode(
-										ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(jecsPackage)),
-										undefined,
-										ts.factory.createIdentifier("InferComponent"),
-										[
-											ts.isIdentifier(ct)
-												? ts.factory.createTypeQueryNode(ct)
-												: ts.factory.createTypeReferenceNode("ReturnType", [
-														ts.factory.createTypeQueryNode(ct.expression),
-													]),
-										],
-										false,
-									),
+					jecsType(
+						"CachedQuery",
+						ts.factory.createTupleTypeNode(
+							components.map((ct) =>
+								jecsType(
+									"InferComponent",
+									ts.isIdentifier(ct)
+										? ts.factory.createTypeQueryNode(ct)
+										: jecsType(
+												"Pair",
+												jecsType(
+													"InferComponent",
+													ts.factory.createTypeQueryNode(ct.arguments[0]),
+												),
+												jecsType(
+													"InferComponent",
+													ts.factory.createTypeQueryNode(ct.arguments[1]),
+												),
+											),
 								),
 							),
-						],
-						false,
+						),
 					),
 					worldScopeInfo ? undefined : node,
 				),

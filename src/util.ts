@@ -23,13 +23,16 @@ export const getTrivia = (node: ts.Node) => node.getFullText().substring(0, node
 
 const NOOP = () => {}
 
-export type Static = ts.Identifier | (ts.CallExpression & { expression: ts.Identifier })
+export type Static =
+	| ts.Identifier
+	| (Omit<ts.CallExpression, "arguments"> & { expression: ts.Identifier; arguments: ts.NodeArray<ts.Identifier> })
 
 export const isStatic = (
 	typeChecker: ts.TypeChecker,
 	sourceFile: ts.SourceFile,
 	node: ts.Node,
 	cb: (stmt: ts.Statement) => void = NOOP,
+	canHaveCalls = true,
 ): node is Static => {
 	if (ts.isIdentifier(node)) {
 		const symbol = typeChecker.getSymbolAtLocation(node)
@@ -55,10 +58,10 @@ export const isStatic = (
 
 		cb(stmt)
 		return true
-	} else if (ts.isCallExpression(node)) {
+	} else if (ts.isCallExpression(node) && canHaveCalls) {
 		return (
 			isStatic(typeChecker, sourceFile, node.expression, cb) &&
-			node.arguments.every((argument) => isStatic(typeChecker, sourceFile, argument, cb))
+			node.arguments.every((argument) => isStatic(typeChecker, sourceFile, argument, cb, false))
 		)
 	} else {
 		return false
