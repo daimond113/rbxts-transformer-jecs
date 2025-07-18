@@ -1,5 +1,5 @@
 import ts from "typescript"
-import { findMatchingChild, getReturnType, getSymbolDeclStatement, getTrivia, isStatic } from "./util.js"
+import { findMatchingChild, getReturnType, getSymbolDeclStatement, getTrivia, isStatic, type Static } from "./util.js"
 import assert from "node:assert"
 
 type Config = { silent?: boolean; jecsPackage?: string }
@@ -61,11 +61,11 @@ const transformerInner = (
 	}
 
 	const decls = []
-	const queryMap = new Map<ts.Symbol, { node: ts.Expression; name: ts.Identifier; components: ts.Identifier[] }[]>()
+	const queryMap = new Map<ts.Symbol, { node: ts.Expression; name: ts.Identifier; components: Static[] }[]>()
 	const worldGlobality = new Map<ts.Symbol, [ts.Identifier, ts.Block] | undefined>()
 
 	const parseQuery = (full: ts.CallExpression) => {
-		const components = [] as ts.Identifier[]
+		const components = [] as Static[]
 
 		const visit = (node: ts.Node): ts.Expression | undefined => {
 			if (ts.isCallExpression(node)) {
@@ -196,7 +196,13 @@ const transformerInner = (
 										ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(jecsPackage)),
 										undefined,
 										ts.factory.createIdentifier("InferComponent"),
-										[ts.factory.createTypeQueryNode(ct)],
+										[
+											ts.isIdentifier(ct)
+												? ts.factory.createTypeQueryNode(ct)
+												: ts.factory.createTypeReferenceNode("ReturnType", [
+														ts.factory.createTypeQueryNode(ct.expression),
+													]),
+										],
 										false,
 									),
 								),

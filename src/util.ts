@@ -23,41 +23,46 @@ export const getTrivia = (node: ts.Node) => node.getFullText().substring(0, node
 
 const NOOP = () => {}
 
+export type Static = ts.Identifier | (ts.CallExpression & { expression: ts.Identifier })
+
 export const isStatic = (
 	typeChecker: ts.TypeChecker,
 	sourceFile: ts.SourceFile,
 	node: ts.Node,
 	cb: (stmt: ts.Statement) => void = NOOP,
-): node is ts.Identifier => {
-	// if it's not an identifier it is an expression or a statement
-	if (!ts.isIdentifier(node)) {
-		return false
-	}
-
-	const symbol = typeChecker.getSymbolAtLocation(node)
-	const decls = symbol?.declarations
-	if (!decls) {
-		return false
-	}
-
-	let stmt: ts.Node = decls[0]
-	while (!ts.isStatement(stmt)) {
-		// function parameters are considered dynamic
-		if (ts.isParameter(stmt)) {
+): node is Static => {
+	if (ts.isIdentifier(node)) {
+		const symbol = typeChecker.getSymbolAtLocation(node)
+		const decls = symbol?.declarations
+		if (!decls) {
 			return false
 		}
-		stmt = stmt.parent
-	}
-	if (!stmt) return false
 
-	// if the statement isn't declared at the root of the file the declaration is considered dynamic
-	if (stmt.parent !== sourceFile) {
+		let stmt: ts.Node = decls[0]
+		while (!ts.isStatement(stmt)) {
+			// function parameters are considered dynamic
+			if (ts.isParameter(stmt)) {
+				return false
+			}
+			stmt = stmt.parent
+		}
+		if (!stmt) return false
+
+		// if the statement isn't declared at the root of the file the declaration is considered dynamic
+		if (stmt.parent !== sourceFile) {
+			return false
+		}
+
+		cb(stmt)
+		return true
+	} else if (ts.isCallExpression(node)) {
+		return (
+			isStatic(typeChecker, sourceFile, node.expression, cb) &&
+			node.arguments.every((argument) => isStatic(typeChecker, sourceFile, argument, cb))
+		)
+	} else {
 		return false
 	}
-
-	cb(stmt)
-
-	return true
 }
 
 export const getSymbolDeclStatement = (symbol: ts.Symbol) => {

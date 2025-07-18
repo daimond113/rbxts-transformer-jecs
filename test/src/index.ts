@@ -1,5 +1,5 @@
 /* eslint-disable no-empty */
-import type { World as _world } from "@rbxts/jecs"
+import { pair, type World as _world } from "@rbxts/jecs"
 import { world, A, B, P } from "./cts"
 
 const C = world.entity()
@@ -22,6 +22,11 @@ export const system = () => {
 	}
 
 	for (const [,] of world.query(P)) {
+	}
+
+	for (const [,] of world.query(pair(A, B))) {
+	}
+	for (const [,] of world.query(pair(A, D))) {
 	}
 }
 
@@ -46,5 +51,10 @@ export const worldSystem = ({ world }: { world: _world }) => {
 
 	for (const [, data] of world.query(P)) {
 		print(data.__brand)
+	}
+
+	for (const [,] of world.query(pair(A, B))) {
+	}
+	for (const [,] of world.query(pair(A, D))) {
 	}
 }
