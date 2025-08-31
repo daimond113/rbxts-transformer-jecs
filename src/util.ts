@@ -21,7 +21,7 @@ export function findMatchingChild(node: ts.Node, predicate: (child: ts.Node) => 
 
 export const getTrivia = (node: ts.Node) => node.getFullText().substring(0, node.getLeadingTriviaWidth())
 
-const NOOP = () => {}
+export const NOOP = () => {}
 
 export type Static =
 	| ts.Identifier
@@ -49,10 +49,8 @@ export const isStatic = (
 			}
 			stmt = stmt.parent
 		}
-		if (!stmt) return false
-
 		// if the statement isn't declared at the root of the file the declaration is considered dynamic
-		if (stmt.parent !== sourceFile) {
+		if (stmt?.parent.kind !== ts.SyntaxKind.SourceFile) {
 			return false
 		}
 

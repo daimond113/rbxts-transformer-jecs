@@ -5,10 +5,14 @@ import { world, A, B, P } from "./cts"
 const C = world.entity()
 
 export const system = () => {
-	for (const [,] of world.query(A, B)) {
+	for (const [e, a] of world.query(A, B)) {
+		if (math.random() > 0.5) break
 	}
 
 	for (const [,] of world.query(A, B, C)) {
+		for (const [,] of world.query(A, B)) {
+			break
+		}
 	}
 
 	for (const [,] of world.query(A).with(B).without(C)) {
@@ -17,7 +21,7 @@ export const system = () => {
 	for (const [,] of /* no-cache */ world.query(A).with(B).without(C)) {
 	}
 
-	const D = math.random() > 0.5 ? A : B
+	const D = math.random() > 0.5 ? A : C
 	for (const [,] of world.query(D)) {
 	}
 
@@ -31,10 +35,14 @@ export const system = () => {
 }
 
 export const worldSystem = ({ world }: { world: _world }) => {
-	for (const [,] of world.query(A, B)) {
+	for (const [e, a] of world.query(A, B)) {
+		if (math.random() > 0.5) break
 	}
 
 	for (const [,] of world.query(A, B, C)) {
+		for (const [,] of world.query(A, B)) {
+			break
+		}
 	}
 
 	for (const [,] of world.query(A).with(B).without(C)) {
@@ -43,7 +51,7 @@ export const worldSystem = ({ world }: { world: _world }) => {
 	for (const [,] of /* no-cache */ world.query(A).with(B).without(C)) {
 	}
 
-	const D = math.random() > 0.5 ? A : B
+	const D = math.random() > 0.5 ? A : C
 	for (const [,] of world.query(D)) {
 	}
 

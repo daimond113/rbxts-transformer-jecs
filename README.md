@@ -1,7 +1,7 @@
 # rbxts-transformer-jecs
 
-A transformer for [roblox-ts](https://roblox-ts.com) to automatically cache
-[Jecs](https://github.com/Ukendio/jecs) queries.
+A [roblox-ts](https://roblox-ts.com) transformer for 
+[Jecs](https://github.com/Ukendio/jecs).
 
 For example, the following system:
 
@@ -12,7 +12,9 @@ import { A, B } from "shared/cts"
 const C = world.entity()
 
 const system: System = () => {
-	for (const [id, a, b] of world.query(A, B).with(C)) {}
+	for (const [id, a, b] of world.query(A, B).with(C)) {
+		print(`${id} has A: ${a} and B: ${b}`)
+	}
 }
 ```
 
@@ -23,8 +25,21 @@ local A = _cts.A
 local B = _cts.B
 local C = world:entity()
 local query_1 = world:query(A, B):with(C):cached()
+local archetypes_1 = query_1:archetypes()
 local system = function()
-	for id, a, b in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		for row_1 = #entities_1, 1, -1 do
+			local id = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+				print(`{id} has A: {a} and B: {b}`)
+			end
+		end
 	end
 end
 ```
@@ -33,7 +48,9 @@ Worlds from non-singleton sources are also supported.
 
 ```typescript
 const system: System = ({ world }) => {
-	for (const [id, a, b] of world.query(A, B).with(C)) {}
+	for (const [id, a, b] of world.query(A, B).with(C)) {
+		print(`${id} has A: ${a} and B: ${b}`)
+	}
 }
 ```
 
@@ -42,13 +59,27 @@ compiles to
 ```luau
 local query_1
 local worldKey_1
+local archetypes_1
 local system = function(_param)
 	local world = _param.world
 	if worldKey_1 ~= world then
 		worldKey_1 = world
 		query_1 = world:query(A, B):with(C):cached()
+		archetypes_1 = query_1:archetypes()
 	end
-	for id, a, b in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		for row_1 = #entities_1, 1, -1 do
+			local id = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+				print(`{id} has A: {a} and B: {b}`)
+			end
+		end
 	end
 end
 ```

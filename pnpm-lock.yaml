@@ -9,10 +9,10 @@ importers:
   .:
     dependencies:
       '@rbxts/jecs':
-        specifier: 0.6.x || 0.7.x || 0.8.x
-        version: 0.6.1
+        specifier: 0.9.x || >=0.9.0-rc.12
+        version: 0.9.0-rc.12
       typescript:
-        specifier: ^5.8.3
+        specifier: 5.8.x
         version: 5.8.3
     devDependencies:
       '@eslint/js':
@@ -46,8 +46,8 @@ importers:
   test:
     dependencies:
       '@rbxts/jecs':
-        specifier: ^0.6.1
-        version: 0.6.1
+        specifier: ^0.9.0-rc.12
+        version: 0.9.0-rc.12
     devDependencies:
       '@rbxts/compiler-types':
         specifier: 3.0.0-types.0
@@ -65,7 +65,7 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       typescript:
-        specifier: ^5.8.3
+        specifier: 5.8.x
         version: 5.8.3
 
 packages:
@@ -163,8 +163,8 @@ packages:
   '@rbxts/compiler-types@3.0.0-types.0':
     resolution: {integrity: sha512-VGOHJPoL7+56NTatMGqQj3K7xWuzEV+aP4QD5vZiHu+bcff3kiTmtoadaF6NkJrmwfFAvbsd4Dg764ZjWNceag==}
 
-  '@rbxts/jecs@0.6.1':
-    resolution: {integrity: sha512-FPcMEnl0OSRoypbjKefAdvGgG5frcNLMiIYNwwL6yjmyl6IbEnitxRGDurOcjYpN3SsxJjIJs/YmHrEMD6doQg==}
+  '@rbxts/jecs@0.9.0-rc.12':
+    resolution: {integrity: sha512-2Tq4H7Pkp7zhfmHGdsKAJr9aDqBq2x5TR+hM6RZxmBXQUrqVzfoGRZWtdICw6ljgiOqz0qIlId8K/4bm8aoo+w==}
 
   '@rbxts/types@1.0.858':
     resolution: {integrity: sha512-fGgTAnU3Yq86vozA7DoGrdwp5ZRI4xpLwG9WPBqVZciB1lGDpnu3vydZ2SNzzSNlLMD32cwfYpkKTAW+b6PgGA==}
@@ -955,7 +955,7 @@ snapshots:
 
   '@rbxts/compiler-types@3.0.0-types.0': {}
 
-  '@rbxts/jecs@0.6.1': {}
+  '@rbxts/jecs@0.9.0-rc.12': {}
 
   '@rbxts/types@1.0.858': {}
 

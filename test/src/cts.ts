@@ -1,6 +1,6 @@
-import { World } from "@rbxts/jecs"
+import { world as World } from "@rbxts/jecs"
 
-export const world = new World()
+export const world = World()
 export const A = world.entity()
 export const B = world.component<string>()
 type PrivateType = {
