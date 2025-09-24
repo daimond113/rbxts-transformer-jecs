@@ -419,12 +419,14 @@ const transformerInner = (
 										el,
 										undefined,
 										undefined,
-										ts.factory.createElementAccessExpression(
-											key,
-											ts.factory.createBinaryExpression(
-												row,
-												ts.factory.createToken(ts.SyntaxKind.MinusToken),
-												ts.factory.createNumericLiteral("1"),
+										ts.factory.createNonNullExpression(
+											ts.factory.createElementAccessExpression(
+												key,
+												ts.factory.createBinaryExpression(
+													row,
+													ts.factory.createToken(ts.SyntaxKind.MinusToken),
+													ts.factory.createNumericLiteral("1"),
+												),
 											),
 										),
 									),
@@ -516,9 +518,11 @@ const transformerInner = (
 																		key,
 																		undefined,
 																		undefined,
-																		ts.factory.createElementAccessExpression(
-																			field,
-																			ct,
+																		ts.factory.createNonNullExpression(
+																			ts.factory.createElementAccessExpression(
+																				field,
+																				ct,
+																			),
 																		),
 																	),
 																),
@@ -591,15 +595,18 @@ const transformerInner = (
 																				entity.name,
 																				undefined,
 																				undefined,
-																				ts.factory.createElementAccessExpression(
-																					entities,
-																					ts.factory.createBinaryExpression(
-																						row,
-																						ts.factory.createToken(
-																							ts.SyntaxKind.MinusToken,
-																						),
-																						ts.factory.createNumericLiteral(
-																							"1",
+																				ts.factory.createNonNullExpression(
+																					ts.factory.createElementAccessExpression(
+																						entities,
+																						ts.factory.createBinaryExpression(
+																							row,
+																							ts.factory.createToken(
+																								ts.SyntaxKind
+																									.MinusToken,
+																							),
+																							ts.factory.createNumericLiteral(
+																								"1",
+																							),
 																						),
 																					),
 																				),
