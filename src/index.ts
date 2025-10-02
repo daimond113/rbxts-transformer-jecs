@@ -4,6 +4,8 @@ import {
 	getReturnType,
 	getSymbolDeclStatement,
 	getTrivia,
+	hasInitializer,
+	isLocallyDeclared,
 	isStatic,
 	NOOP,
 	type Static,
@@ -177,6 +179,12 @@ const transformerInner = (
 					world = world.expression
 					const worldSymbol = typeChecker.getSymbolAtLocation(world)
 					assert(worldSymbol, "Cannot resolve type of world")
+
+					if (isLocallyDeclared(worldSymbol)) {
+						//} || !hasInitializer(worldSymbol)) {
+						return node
+					}
+
 					if (!worldGlobality.has(worldSymbol)) {
 						const worldKey = isStatic(typeChecker, sourceFile, world)
 							? undefined

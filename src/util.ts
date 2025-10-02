@@ -66,6 +66,37 @@ export const isStatic = (
 	}
 }
 
+export const isLocallyDeclared = (symbol: ts.Symbol): boolean => {
+	const decls = symbol?.declarations
+	if (!decls) return false
+
+	let node: ts.Node = decls[0]
+	while (!ts.isStatement(node)) {
+		if (ts.isParameter(node)) {
+			return false
+		}
+		node = node.parent
+	}
+
+	return node.parent.kind !== ts.SyntaxKind.SourceFile
+}
+
+export const hasInitializer = (symbol: ts.Symbol): boolean => {
+	const decls = symbol?.declarations
+	if (!decls) return false
+
+	const decl = decls[0]
+	if (ts.isVariableDeclaration(decl)) {
+		return decl.initializer !== undefined
+	}
+
+	if (ts.isParameter(decl)) {
+		return false
+	}
+
+	return true
+}
+
 export const getSymbolDeclStatement = (symbol: ts.Symbol) => {
 	const decls = symbol?.declarations
 	if (!decls) {

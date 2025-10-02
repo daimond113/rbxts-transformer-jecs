@@ -1,5 +1,5 @@
 /* eslint-disable no-empty */
-import { pair, type World as _world } from "@rbxts/jecs"
+import Jecs, { pair, type World as _world } from "@rbxts/jecs"
 import { world, A, B, P } from "./cts"
 
 const C = world.entity()
@@ -66,3 +66,27 @@ export const worldSystem = ({ world }: { world: _world }) => {
 	for (const [,] of world.query(pair(A, D))) {
 	}
 }
+
+const isolatedGameWorld = Jecs.world()
+
+export const functionWithWorldCreation = () => {
+	for (const [e, a] of isolatedGameWorld.query(A, B)) {
+	}
+}
+
+declare function beforeEach(cb: () => void): void
+declare function describe(name: string, cb: () => void): void
+declare function it(name: string, cb: () => void): void
+
+let testWorld: _world
+
+describe("unit test", () => {
+	beforeEach(() => {
+		testWorld = Jecs.world()
+	})
+
+	it("can query entities", () => {
+		for (const [e, a] of testWorld.query(A, B)) {
+		}
+	})
+})
