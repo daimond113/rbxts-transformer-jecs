@@ -86,14 +86,18 @@ export const hasInitializer = (symbol: ts.Symbol): boolean => {
 	if (!decls) return false
 
 	const decl = decls[0]
+
+	// Variable declarations may or may not have initializers
 	if (ts.isVariableDeclaration(decl)) {
 		return decl.initializer !== undefined
 	}
 
+	// Parameters are "initialized" by the caller
 	if (ts.isParameter(decl)) {
-		return false
+		return true
 	}
 
+	// Other declarations (imports, functions, etc.) are considered initialized
 	return true
 }
 

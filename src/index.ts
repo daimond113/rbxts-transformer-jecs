@@ -180,8 +180,7 @@ const transformerInner = (
 					const worldSymbol = typeChecker.getSymbolAtLocation(world)
 					assert(worldSymbol, "Cannot resolve type of world")
 
-					if (isLocallyDeclared(worldSymbol)) {
-						//} || !hasInitializer(worldSymbol)) {
+					if (isLocallyDeclared(worldSymbol) || !hasInitializer(worldSymbol)) {
 						return node
 					}
 

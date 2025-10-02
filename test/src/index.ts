@@ -74,6 +74,12 @@ export const functionWithWorldCreation = () => {
 	}
 }
 
+export const directParamWorld = (world: _world) => {
+	for (const [e, a] of world.query(A, B)) {
+		if (math.random() > 0.5) break
+	}
+}
+
 declare function beforeEach(cb: () => void): void
 declare function describe(name: string, cb: () => void): void
 declare function it(name: string, cb: () => void): void
