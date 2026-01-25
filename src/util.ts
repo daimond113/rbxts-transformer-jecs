@@ -25,6 +25,7 @@ export const NOOP = () => {}
 
 export type Static =
 	| ts.Identifier
+	| ts.PropertyAccessExpression
 	| (Omit<ts.CallExpression, "arguments"> & { expression: ts.Identifier; arguments: ts.NodeArray<ts.Identifier> })
 
 export const isStatic = (
@@ -60,6 +61,11 @@ export const isStatic = (
 		return (
 			isStatic(typeChecker, sourceFile, node.expression, cb) &&
 			node.arguments.every((argument) => isStatic(typeChecker, sourceFile, argument, cb, false))
+		)
+	} else if (ts.isPropertyAccessExpression(node)) {
+		if (ts.isPrivateIdentifier(node.name)) return false
+		return (
+			isStatic(typeChecker, sourceFile, node.name, cb) && isStatic(typeChecker, sourceFile, node.expression, cb)
 		)
 	} else {
 		return false
