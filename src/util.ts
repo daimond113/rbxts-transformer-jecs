@@ -64,7 +64,9 @@ export const isStatic = (
 		)
 	} else if (ts.isPropertyAccessExpression(node)) {
 		if (ts.isPrivateIdentifier(node.name)) return false
-		return isStatic(typeChecker, sourceFile, node.expression)
+		return (
+			isStatic(typeChecker, sourceFile, node.name, cb) && isStatic(typeChecker, sourceFile, node.expression, cb)
+		)
 	} else {
 		return false
 	}

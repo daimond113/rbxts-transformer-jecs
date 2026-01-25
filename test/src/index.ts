@@ -3,6 +3,9 @@ import { pair, type World as _world } from "@rbxts/jecs"
 import { world, A, B, P, ct } from "./cts"
 
 const C = world.entity()
+const localCt = {
+	A: world.entity()	
+}
 
 export const system = () => {
 	for (const [e, a] of world.query(A, B)) {
@@ -17,6 +20,16 @@ export const system = () => {
 
 	for (const [,] of world.query(ct.C, ct.inner.D)) {
 
+	}
+
+	for (const [,] of world.query(localCt.A)) {
+
+	}
+
+	const dynCt = { B: world.entity() }
+
+	for (const [,] of world.query(dynCt.B)) {
+		
 	}
 
 	for (const [,] of world.query())
@@ -50,6 +63,22 @@ export const worldSystem = ({ world }: { world: _world }) => {
 			break
 		}
 	}
+
+	for (const [,] of world.query(ct.C, ct.inner.D)) {
+
+	}
+
+	for (const [,] of world.query(localCt.A)) {
+
+	}
+
+	const dynCt = { B: world.entity() }
+
+	for (const [,] of world.query(dynCt.B)) {
+
+	}
+
+	for (const [,] of world.query())
 
 	for (const [,] of world.query(A).with(B).without(C)) {
 	}
