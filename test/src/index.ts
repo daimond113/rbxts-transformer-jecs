@@ -1,6 +1,6 @@
 /* eslint-disable no-empty */
 import { pair, type World as _world } from "@rbxts/jecs"
-import { world, A, B, P } from "./cts"
+import { world, A, B, P, ct } from "./cts"
 
 const C = world.entity()
 
@@ -14,6 +14,12 @@ export const system = () => {
 			break
 		}
 	}
+
+	for (const [,] of world.query(ct.C, ct.inner.D)) {
+
+	}
+
+	for (const [,] of world.query())
 
 	for (const [,] of world.query(A).with(B).without(C)) {
 	}

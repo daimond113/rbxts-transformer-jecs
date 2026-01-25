@@ -237,6 +237,19 @@ const transformerInner = (
 						false,
 					)
 
+				const generateQualifiedName = (node: ts.PropertyAccessExpression): ts.QualifiedName => {
+					let left: ts.QualifiedName | ts.Identifier
+					if (ts.isPropertyAccessExpression(node.expression)) {
+						left = generateQualifiedName(node.expression)
+					} else {
+						assert(ts.isIdentifier(node.expression))
+						left = node.expression
+					}
+
+					assert(ts.isIdentifier(node.name)) // can safely assert, because it wouldn't cache if it was a private identifier
+					return ts.factory.createQualifiedName(left, node.name)
+				}
+
 				const localDecls = queries.flatMap(({ node, name, archetypes, components }) => [
 					ts.factory.createVariableDeclaration(
 						name,
@@ -244,21 +257,17 @@ const transformerInner = (
 						jecsType(
 							"CachedQuery",
 							ts.factory.createTupleTypeNode(
-								components.map((ct) =>
-									ts.isIdentifier(ct)
-										? ts.factory.createTypeQueryNode(ct)
-										: jecsType(
-												"Pair",
-												jecsType(
-													"InferComponent",
-													ts.factory.createTypeQueryNode(ct.arguments[0]),
-												),
-												jecsType(
-													"InferComponent",
-													ts.factory.createTypeQueryNode(ct.arguments[1]),
-												),
-											),
-								),
+								components.map((ct) => {
+									if (ts.isIdentifier(ct)) return ts.factory.createTypeQueryNode(ct)
+									if (ts.isPropertyAccessExpression(ct))
+										return ts.factory.createTypeQueryNode(generateQualifiedName(ct))
+
+									return jecsType(
+										"Pair",
+										jecsType("InferComponent", ts.factory.createTypeQueryNode(ct.arguments[0])),
+										jecsType("InferComponent", ts.factory.createTypeQueryNode(ct.arguments[1])),
+									)
+								}),
 							),
 						),
 						worldScopeInfo ? undefined : node,
