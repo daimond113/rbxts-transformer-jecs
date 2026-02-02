@@ -48,8 +48,13 @@ export const isStatic = (
 			if (ts.isParameter(stmt)) {
 				return false
 			}
+			// if the variable isn't initalized it is considered dynamic
+			if (ts.isVariableDeclaration(stmt) && stmt.initializer === undefined) {
+				return false
+			}
 			stmt = stmt.parent
 		}
+
 		// if the statement isn't declared at the root of the file the declaration is considered dynamic
 		if (stmt?.parent.kind !== ts.SyntaxKind.SourceFile) {
 			return false
