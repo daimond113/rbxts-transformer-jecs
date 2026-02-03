@@ -1,3 +1,5 @@
-packages:
-  - .
-  - test
+onlyBuiltDependencies:
+  - esbuild
+
+patchedDependencies:
+  roblox-ts: patches/roblox-ts.patch

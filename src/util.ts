@@ -1,4 +1,10 @@
 import ts from "typescript"
+import { TransformState } from "./transforms/index.js"
+import assert from "assert"
+
+export const toArray = <T>(item: T | T[]) => (Array.isArray(item) ? item : [item])
+
+export const getLeadingTrivia = (node: ts.Node) => node.getFullText().substring(0, node.getLeadingTriviaWidth())
 
 export function findMatchingChild<T extends ts.Node>(
 	node: ts.Node,
@@ -19,77 +25,84 @@ export function findMatchingChild(node: ts.Node, predicate: (child: ts.Node) => 
 	return found
 }
 
-export const getTrivia = (node: ts.Node) => node.getFullText().substring(0, node.getLeadingTriviaWidth())
-
-export const NOOP = () => {}
-
-export type Static =
-	| ts.Identifier
-	| ts.PropertyAccessExpression
-	| (Omit<ts.CallExpression, "arguments"> & { expression: ts.Identifier; arguments: ts.NodeArray<ts.Identifier> })
-
-export const isStatic = (
-	typeChecker: ts.TypeChecker,
-	sourceFile: ts.SourceFile,
-	node: ts.Node,
-	cb: (stmt: ts.Statement) => void = NOOP,
-	canHaveCalls = true,
-): node is Static => {
+export const staticDeclarations = (state: TransformState, node: ts.Node, canHaveCalls = true): ts.Statement[] => {
 	if (ts.isIdentifier(node)) {
-		const symbol = typeChecker.getSymbolAtLocation(node)
+		const symbol = state.typeChecker.getSymbolAtLocation(node)
 		const decls = symbol?.declarations
 		if (!decls) {
-			return false
+			return []
 		}
 
 		let stmt: ts.Node = decls[0]
 		while (!ts.isStatement(stmt)) {
 			// function parameters are considered dynamic
 			if (ts.isParameter(stmt)) {
-				return false
+				return []
 			}
 			// if the variable isn't initalized it is considered dynamic
 			if (ts.isVariableDeclaration(stmt) && stmt.initializer === undefined) {
-				return false
+				return []
 			}
 			stmt = stmt.parent
 		}
 
-		// if the statement isn't declared at the root of the file the declaration is considered dynamic
-		if (stmt?.parent.kind !== ts.SyntaxKind.SourceFile) {
-			return false
+		if (stmt.parent !== state.currentCache().node && stmt.parent.kind !== ts.SyntaxKind.SourceFile) {
+			return []
 		}
 
-		cb(stmt)
-		return true
+		return [stmt]
 	} else if (ts.isCallExpression(node) && canHaveCalls) {
-		return (
-			isStatic(typeChecker, sourceFile, node.expression, cb) &&
-			node.arguments.every((argument) => isStatic(typeChecker, sourceFile, argument, cb, false))
-		)
+		const exprDecls = staticDeclarations(state, node.expression)
+		if (!exprDecls.length) return []
+
+		const argsDecls = []
+		for (const arg of node.arguments) {
+			const decls = staticDeclarations(state, arg)
+			if (!decls.length) return []
+			argsDecls.push(...decls)
+		}
+		if (!argsDecls.length) return []
+
+		return [...exprDecls, ...argsDecls]
 	} else if (ts.isPropertyAccessExpression(node)) {
-		if (ts.isPrivateIdentifier(node.name)) return false
-		return (
-			isStatic(typeChecker, sourceFile, node.name, cb) && isStatic(typeChecker, sourceFile, node.expression, cb)
-		)
+		if (ts.isPrivateIdentifier(node.name)) return []
+
+		const nameDecls = staticDeclarations(state, node.name)
+		if (!nameDecls.length) return []
+
+		const exprDecls = staticDeclarations(state, node.expression)
+		if (!exprDecls.length) return []
+
+		return [...nameDecls, ...exprDecls]
 	} else {
-		return false
+		return []
 	}
 }
 
-export const getSymbolDeclStatement = (symbol: ts.Symbol) => {
-	const decls = symbol?.declarations
-	if (!decls) {
-		return
+export function staticCtToTypeNode(state: TransformState, node: ts.Node): ts.TypeNode {
+	if (ts.isIdentifier(node)) return ts.factory.createTypeQueryNode(node)
+	else if (ts.isPropertyAccessExpression(node)) {
+		return ts.factory.createTypeQueryNode(generateQualifiedName(node))
+	} else if (ts.isCallExpression(node)) {
+		return state.jecsType(
+			"Pair",
+			staticCtToTypeNode(state, node.arguments[0]),
+			staticCtToTypeNode(state, node.arguments[1]),
+		)
 	}
 
-	let stmt: ts.Node = decls[0]
-	while (!ts.isStatement(stmt)) {
-		stmt = stmt.parent
-	}
-	return stmt
+	throw new Error(`Unsupported query component type: ${ts.SyntaxKind[node.kind]}`)
 }
 
-export const getReturnType = (typeChecker: ts.TypeChecker, node: ts.CallExpression) =>
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	typeChecker.getReturnTypeOfSignature(typeChecker.getResolvedSignature(node)!)
+export function generateQualifiedName(node: ts.PropertyAccessExpression): ts.QualifiedName {
+	let left: ts.QualifiedName | ts.Identifier
+	if (ts.isPropertyAccessExpression(node.expression)) {
+		left = generateQualifiedName(node.expression)
+	} else {
+		assert(ts.isIdentifier(node.expression))
+		left = node.expression
+	}
+
+	assert(ts.isIdentifier(node.name)) // can safely assert, because it wouldn't cache if it was a private identifier
+	return ts.factory.createQualifiedName(left, node.name)
+}

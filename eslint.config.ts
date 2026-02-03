@@ -15,6 +15,6 @@ export default defineConfig(
 			},
 		},
 	},
-	globalIgnores(["**/out", "test"]),
+	globalIgnores(["**/out"]),
 	prettier,
 )

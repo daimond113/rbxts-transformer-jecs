@@ -1,0 +1,47 @@
+diff --git a/out/Project/classes/VirtualProject.d.ts b/out/Project/classes/VirtualProject.d.ts
+index a1fb900da79b0b342d2da6272d347f4db57f1bd3..db076a0c7620c38870f8210e8904c9bc3cdffcb1 100644
+--- a/out/Project/classes/VirtualProject.d.ts
++++ b/out/Project/classes/VirtualProject.d.ts
+@@ -1,3 +1,4 @@
++import ts from "typescript";
+ import { VirtualFileSystem } from "./VirtualFileSystem";
+ export declare class VirtualProject {
+     private readonly data;
+@@ -9,6 +10,7 @@ export declare class VirtualProject {
+     private program;
+     private typeChecker;
+     private nodeModulesPathMapping;
++    public tsTransformers: ((program: ts.Program) => ts.TransformerFactory<ts.SourceFile>)[];
+     constructor();
+     compileSource(source: string): string;
+     setMapping(typings: string, main: string): void;
+diff --git a/out/Project/classes/VirtualProject.js b/out/Project/classes/VirtualProject.js
+index da18a9d0f5afa55dc58bff2c8ee01bc50d8205c9..8c657611d11fe9662f09481dd8d09b397d2d8f48 100644
+--- a/out/Project/classes/VirtualProject.js
++++ b/out/Project/classes/VirtualProject.js
+@@ -84,6 +84,7 @@ class VirtualProject {
+             },
+         });
+         this.pkgRojoResolvers = this.compilerOptions.typeRoots.map(rojo_resolver_1.RojoResolver.synthetic);
++        this.tsTransformers = [];
+     }
+     compileSource(source) {
+         this.vfs.writeFile(PLAYGROUND_PATH, source);
+@@ -94,8 +95,16 @@ class VirtualProject {
+         this.typeChecker = this.program.getTypeChecker();
+         const services = (0, createTransformServices_1.createTransformServices)(this.typeChecker);
+         const pathTranslator = new path_translator_1.PathTranslator(ROOT_DIR, OUT_DIR, undefined, false, this.data.projectOptions.luau);
+-        const sourceFile = this.program.getSourceFile(PLAYGROUND_PATH);
++        let sourceFile = this.program.getSourceFile(PLAYGROUND_PATH);
+         (0, assert_1.assert)(sourceFile);
++        if (this.tsTransformers.length) {
++            const result = typescript_1.default.transform(
++                sourceFile,
++                this.tsTransformers.map(t => t(this.program)),
++                this.compilerOptions
++            );
++            sourceFile = result.transformed[0];
++        }
+         const diagnostics = new Array();
+         diagnostics.push(...typescript_1.default.getPreEmitDiagnostics(this.program, sourceFile));
+         diagnostics.push(...(0, getCustomPreEmitDiagnostics_1.getCustomPreEmitDiagnostics)(this.data, sourceFile));

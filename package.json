@@ -2,7 +2,7 @@
   "name": "rbxts-transformer-jecs",
   "version": "0.0.8",
   "description": "A roblox-ts transformer for Jecs",
-  "main": "out/index.js",
+  "main": "out/src/index.js",
   "type": "module",
   "author": "daimond113 <contact@daimond113.com> (https://www.daimond113.com)",
   "license": "MIT",
@@ -10,25 +10,32 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "pnpm build && cd test && pnpm build",
+    "test": "vitest",
     "prepare": "pnpm build"
   },
   "files": [
-    "out"
+    "out/src"
   ],
   "peerDependencies": {
     "@rbxts/jecs": "0.9.x || >=0.9.0-rc.12",
     "typescript": ">=5.5.0 <5.9.0"
   },
   "devDependencies": {
-    "@types/ts-expose-internals": "npm:ts-expose-internals@5.6.3",
+    "@antfu/utils": "^9.3.0",
     "@eslint/js": "^9.36.0",
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/jecs": "^0.9.0",
+    "@rbxts/types": "^1.0.858",
     "@types/node": "^24.5.0",
+    "@types/ts-expose-internals": "npm:ts-expose-internals@5.6.3",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.4.4",
     "jiti": "^2.6.0",
     "prettier": "^3.6.0",
-    "typescript-eslint": "^8.44.0"
+    "roblox-ts": "^3.0.0",
+    "typescript-eslint": "^8.44.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   }
 }
