@@ -27,7 +27,7 @@ export const compile = async (source: string): Promise<string> => {
 	}
 
 	project.vfs.writeFile(
-		"/ecs.ts",
+		"/src/ecs.ts",
 		`
 		import { world as World } from "@rbxts/jecs"
 		export const world = World()

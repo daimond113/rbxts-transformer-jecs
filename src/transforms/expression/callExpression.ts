@@ -39,6 +39,12 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 
 	const worldDecls = staticDeclarations(state, world)
 
+	// Skip if world isn't statically declared (e.g., function parameter)
+	// because we can't cache at file level without access to the world
+	if (!worldDecls.length) {
+		return
+	}
+
 	const cache = worldDecls.some((stmt) => stmt.parent.kind === ts.SyntaxKind.SourceFile)
 		? state.fileCache()
 		: state.currentCache()

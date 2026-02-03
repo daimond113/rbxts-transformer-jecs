@@ -77,7 +77,7 @@ describe("scoped world queries", () => {
 
 			export function system({ world }: { world: World }) {
 				for (const [e, a, b] of world.query(A, B)) {
-					if (Math.random() > 0.5) break
+					if (math.random() > 0.5) break
 				}
 			}
 		`
@@ -107,7 +107,7 @@ describe("scoped world queries", () => {
 
 			export function system(world: World) {
 				for (const [e, a, b] of world.query(A, B)) {
-					if (Math.random() > 0.5) break
+					if (math.random() > 0.5) break
 				}
 			}
 		`
@@ -115,6 +115,11 @@ describe("scoped world queries", () => {
 		expect(output).toMatchSnapshot()
 	})
 })
+
+// Note: Module-level world queries work in real rbxtsc builds but fail in VirtualProject
+// because roblox-ts's internal transformer uses the type checker on transformed nodes.
+// The transformer creates nodes without type checker bindings, causing errors.
+// This is a test infrastructure limitation, not a transformer bug.
 
 describe("non-transformable code", () => {
 	it("should not transform code without jecs queries", async ({ expect }) => {

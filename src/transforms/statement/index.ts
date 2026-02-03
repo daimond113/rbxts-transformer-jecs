@@ -13,5 +13,10 @@ export function transformStatement(state: TransformState, statement: ts.Statemen
 		() => TRANSFORMERS.get(statement.kind)?.(state, statement) ?? state.transform(statement),
 	)
 
+	// Only return array when there are prereqs, otherwise return single node
+	// to avoid breaking visitEachChild which expects single nodes
+	if (prereqs.length === 0 && !Array.isArray(node)) {
+		return node
+	}
 	return [...prereqs, ...toArray(node)]
 }

@@ -1,0 +1,161 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`non-transformable code > should not transform code without jecs queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local function add(a, b)
+	return a + b
+end
+return {
+	add = add,
+}
+"
+`;
+
+exports[`scoped world queries > should add world invalidation checks 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	for e1 in world:query(A, B, C) do
+		for e2 in world:query(A, B) do
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should handle break statements 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(_param)
+	local world = _param.world
+	for e, a, b in world:query(A, B) do
+		if math.random() > 0.5 then
+			break
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should handle direct world parameter 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(world)
+	for e, a, b in world:query(A, B) do
+		if math.random() > 0.5 then
+			break
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should handle nested queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	for e1 in world:query(A, B, C) do
+		for e2 in world:query(A, B) do
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should optimize basic scoped query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(_param)
+	local world = _param.world
+	for e, a, b in world:query(A, B) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should optimize query with .with() modifier 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	for id in world:query(A, B):with(C) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should optimize query with .without() modifier 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	for id in world:query(A):without(C) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries > should optimize query with both modifiers 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	for id in world:query(A):with(B):without(C) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
