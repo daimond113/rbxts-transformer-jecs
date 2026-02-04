@@ -149,6 +149,8 @@ export class TransformState {
 			false,
 		)
 	}
+
+	public cachedQueries = new Map<ts.Identifier, { archetypes: ts.Identifier; components: ts.Expression[] }>()
 }
 
 class Cache {

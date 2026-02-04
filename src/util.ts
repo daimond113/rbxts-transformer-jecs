@@ -39,7 +39,7 @@ export const staticDeclarations = (state: TransformState, node: ts.Node, canHave
 			if (ts.isParameter(stmt)) {
 				return []
 			}
-			// if the variable isn't initalized it is considered dynamic
+			// if the variable isn't initialized it is considered dynamic
 			if (ts.isVariableDeclaration(stmt) && stmt.initializer === undefined) {
 				return []
 			}

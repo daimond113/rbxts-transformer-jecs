@@ -34,7 +34,7 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 		parent = parent.parent.parent
 	}
 
-	const [valid, componentDecls, queryComponentsType] = parseQuery(state, queryCreation)
+	const [valid, componentDecls, queryComponents] = parseQuery(state, queryCreation)
 	if (!valid) {
 		if (!state.config.silent) {
 			console.warn(
@@ -62,6 +62,7 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 
 	const queryIdentifier = ts.factory.createUniqueName("query")
 	const archetypesIdentifier = ts.factory.createUniqueName("archetypes")
+	state.cachedQueries.set(queryIdentifier, { archetypes: archetypesIdentifier, components: queryComponents })
 
 	const expressionCached = ts.factory.createCallExpression(
 		ts.factory.createPropertyAccessExpression(expression, "cached"),
@@ -97,7 +98,10 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 		const queryVarDecl = ts.factory.createVariableDeclaration(
 			queryIdentifier,
 			undefined,
-			state.jecsType("CachedQuery", queryComponentsType()),
+			state.jecsType(
+				"CachedQuery",
+				ts.factory.createTupleTypeNode(queryComponents.map((ct) => staticCtToTypeNode(state, ct))),
+			),
 			undefined,
 		)
 		const archetypesVarDecl = ts.factory.createVariableDeclaration(
@@ -136,33 +140,33 @@ function isQueryCreation(state: TransformState, node: ts.Node): node is ts.CallE
 	)
 }
 
-function parseQuery(
+export function parseQuery(
 	state: TransformState,
 	expression: ts.CallExpression,
-): [true, ts.Statement[], () => ts.TupleTypeNode] | [false, ts.Expression] {
+): [true, ts.Statement[], ts.Expression[]] | [false, ts.Expression, ts.Expression[]] {
 	const declarationStmts = new Array<ts.Statement>()
-	const queryCts = new Array<ts.Node>()
+	const queryComponents = new Array<ts.Expression>()
 
 	const symbols = [state.jecs.world.query, state.jecs.query.with, state.jecs.query.without]
 
-	const visit = (node: ts.Node): ts.Expression | undefined => {
+	let fault: ts.Expression | undefined = undefined
+
+	const visit = (node: ts.Node): ts.Node | undefined => {
 		if (ts.isCallExpression(node)) {
 			const symbol = state.typeChecker.getSymbolAtLocation(node.expression)
-			if (!symbol) return node
-
 			// FIXME: because Query is generic, the symbols will be different.
 			// we compare the declarations because as far as i know there is no other way.
-			const container = symbols.find((s) => genericSymbolsAreEqual(s, symbol))
+			const container = symbol && symbols.find((s) => genericSymbolsAreEqual(s, symbol))
 			if (container) {
 				for (const ct of node.arguments) {
 					const declarations = staticDeclarations(state, ct)
 					if (!declarations.length) {
-						return ct
+						fault = ct
 					}
 					declarationStmts.push(...declarations)
 
 					if (symbol === state.jecs.world.query) {
-						queryCts.push(ct)
+						queryComponents.push(ct)
 					}
 				}
 			}
@@ -171,11 +175,7 @@ function parseQuery(
 		return ts.forEachChild(node, visit)
 	}
 
-	const fault = visit(expression)
-	if (fault) return [false, fault]
-	return [
-		true,
-		declarationStmts,
-		() => ts.factory.createTupleTypeNode(queryCts.map((ct) => staticCtToTypeNode(state, ct))),
-	]
+	visit(expression)
+	if (fault) return [false, fault, queryComponents]
+	return [true, declarationStmts, queryComponents]
 }

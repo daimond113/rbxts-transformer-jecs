@@ -13,8 +13,20 @@ local archetypes_1 = query_1:archetypes()
 local query_2 = world:query(A, B):cached()
 local archetypes_2 = query_2:archetypes()
 local function system()
-	for e1 in query_1 do
-		for e2 in query_2 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -33,7 +45,16 @@ local world = _ecs.world
 local query_1 = world:query(D):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for e, d in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local D_1 = field_1[D]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local d = D_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -53,7 +74,12 @@ local world = _ecs.world
 local query_1 = world:query(pair(A, B)):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for _ in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -72,8 +98,24 @@ local world = _ecs.world
 local query_1 = world:query(A, B):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for e, a, b in query_1 do
-		if math.random() > 0.5 then
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		local broken_1 = false
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+				if math.random() > 0.5 then
+					broken_1 = true
+					break
+				end
+			end
+		end
+		if broken_1 then
 			break
 		end
 	end
@@ -97,13 +139,35 @@ local archetypes_1 = query_1:archetypes()
 local query_2 = world:query(A, B):cached()
 local archetypes_2 = query_2:archetypes()
 local function system()
-	for e1 in query_1 do
-		for e2 in query_2 do
-			if math.random() > 0.5 then
-				break
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local broken_1 = false
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					local broken_2 = false
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+							if math.random() > 0.5 then
+								broken_2 = true
+								break
+							end
+						end
+					end
+					if broken_2 then
+						break
+					end
+				end
+				if math.random() > 0.5 then
+					broken_1 = true
+					break
+				end
 			end
 		end
-		if math.random() > 0.5 then
+		if broken_1 then
 			break
 		end
 	end
@@ -127,8 +191,20 @@ local archetypes_1 = query_1:archetypes()
 local query_2 = world:query(A, B):cached()
 local archetypes_2 = query_2:archetypes()
 local function system()
-	for e1 in query_1 do
-		for e2 in query_2 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -165,7 +241,12 @@ local A = _ecs.A
 local B = _ecs.B
 local world = _ecs.world
 local function system()
-	for _ in world:query(A, B) do
+	for _, archetype_1 in world:query(A, B):archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -184,7 +265,18 @@ local world = _ecs.world
 local query_1 = world:query(A, B):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for e, a, b in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -204,7 +296,13 @@ local world = _ecs.world
 local query_1 = world:query(A, B):with(C):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -223,7 +321,13 @@ local world = _ecs.world
 local query_1 = world:query(A):without(C):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -243,7 +347,13 @@ local world = _ecs.world
 local query_1 = world:query(A):with(B):without(C):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -261,7 +371,16 @@ local world = _ecs.world
 local query_1 = world:query(tbl.E):cached()
 local archetypes_1 = query_1:archetypes()
 local function system()
-	for e, e2 in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local _a = field_1[tbl.E]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local e2 = _a[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -278,7 +397,12 @@ local A = _ecs.A
 local B = _ecs.B
 local world = _ecs.world
 local function system()
-	for _ in world:query(A, B):cached() do
+	for _, archetype_1 in world:query(A, B):cached():archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -296,7 +420,12 @@ local B = _ecs.B
 local C = _ecs.C
 local world = _ecs.world
 local function system()
-	for _ in world:query(A):with(B):without(C):cached() do
+	for _, archetype_1 in world:query(A):with(B):without(C):cached():archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -337,8 +466,20 @@ local function system(_param)
 		query_2 = world:query(A, B):cached()
 		archetypes_2 = query_2:archetypes()
 	end
-	for e1 in query_1 do
-		for e2 in query_2 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -362,7 +503,16 @@ local function system(_param)
 		query_1 = world:query(D):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, d in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local D_1 = field_1[D]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local d = D_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -388,7 +538,12 @@ local function system(_param)
 		query_1 = world:query(pair(A, B)):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for _ in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -413,8 +568,24 @@ local function system(_param)
 		query_1 = world:query(A, B):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, a, b in query_1 do
-		if math.random() > 0.5 then
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		local broken_1 = false
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+				if math.random() > 0.5 then
+					broken_1 = true
+					break
+				end
+			end
+		end
+		if broken_1 then
 			break
 		end
 	end
@@ -446,13 +617,35 @@ local function system(_param)
 		query_2 = world:query(A, B):cached()
 		archetypes_2 = query_2:archetypes()
 	end
-	for e1 in query_1 do
-		for e2 in query_2 do
-			if math.random() > 0.5 then
-				break
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local broken_1 = false
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					local broken_2 = false
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+							if math.random() > 0.5 then
+								broken_2 = true
+								break
+							end
+						end
+					end
+					if broken_2 then
+						break
+					end
+				end
+				if math.random() > 0.5 then
+					broken_1 = true
+					break
+				end
 			end
 		end
-		if math.random() > 0.5 then
+		if broken_1 then
 			break
 		end
 	end
@@ -484,8 +677,20 @@ local function system(_param)
 		query_2 = world:query(A, B):cached()
 		archetypes_2 = query_2:archetypes()
 	end
-	for e1 in query_1 do
-		for e2 in query_2 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -522,7 +727,12 @@ local A = _ecs.A
 local B = _ecs.B
 local function system(_param)
 	local world = _param.world
-	for _ in world:query(A, B) do
+	for _, archetype_1 in world:query(A, B):archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -547,7 +757,18 @@ local function system(_param)
 		query_1 = world:query(A, B):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, a, b in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -573,7 +794,13 @@ local function system(_param)
 		query_1 = world:query(A, B):with(C):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -598,7 +825,13 @@ local function system(_param)
 		query_1 = world:query(A):without(C):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -624,7 +857,13 @@ local function system(_param)
 		query_1 = world:query(A):with(B):without(C):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -647,7 +886,16 @@ local function system(_param)
 		query_1 = world:query(tbl.E):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, e2 in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local _a = field_1[tbl.E]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local e2 = _a[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -664,7 +912,12 @@ local A = _ecs.A
 local B = _ecs.B
 local function system(_param)
 	local world = _param.world
-	for _ in world:query(A, B):cached() do
+	for _, archetype_1 in world:query(A, B):cached():archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -682,7 +935,12 @@ local B = _ecs.B
 local C = _ecs.C
 local function system(_param)
 	local world = _param.world
-	for _ in world:query(A):with(B):without(C):cached() do
+	for _, archetype_1 in world:query(A):with(B):without(C):cached():archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -713,8 +971,20 @@ local function system(info)
 		query_2 = world:query(A, B):cached()
 		archetypes_2 = query_2:archetypes()
 	end
-	for e1 in query_1 do
-		for e2 in query_2 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -739,7 +1009,16 @@ local function system(info)
 		query_1 = world:query(D):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, d in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local D_1 = field_1[D]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local d = D_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -766,7 +1045,12 @@ local function system(info)
 		query_1 = world:query(pair(A, B)):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for _ in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -792,8 +1076,24 @@ local function system(info)
 		query_1 = world:query(A, B):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, a, b in query_1 do
-		if math.random() > 0.5 then
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		local broken_1 = false
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+				if math.random() > 0.5 then
+					broken_1 = true
+					break
+				end
+			end
+		end
+		if broken_1 then
 			break
 		end
 	end
@@ -826,13 +1126,35 @@ local function system(info)
 		query_2 = world:query(A, B):cached()
 		archetypes_2 = query_2:archetypes()
 	end
-	for e1 in query_1 do
-		for e2 in query_2 do
-			if math.random() > 0.5 then
-				break
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local broken_1 = false
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					local broken_2 = false
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+							if math.random() > 0.5 then
+								broken_2 = true
+								break
+							end
+						end
+					end
+					if broken_2 then
+						break
+					end
+				end
+				if math.random() > 0.5 then
+					broken_1 = true
+					break
+				end
 			end
 		end
-		if math.random() > 0.5 then
+		if broken_1 then
 			break
 		end
 	end
@@ -865,8 +1187,20 @@ local function system(info)
 		query_2 = world:query(A, B):cached()
 		archetypes_2 = query_2:archetypes()
 	end
-	for e1 in query_1 do
-		for e2 in query_2 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+				for _1, archetype_2 in archetypes_2 do
+					local entities_2 = archetype_2.entities
+					for row_2 = #entities_2, 1, -1 or 1 do
+						local e2 = entities_2[row_2]
+						do
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -905,7 +1239,12 @@ local B = _ecs.B
 local function system(info)
 	local _binding = info
 	local world = _binding.world
-	for _ in world:query(A, B) do
+	for _, archetype_1 in world:query(A, B):archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -931,7 +1270,18 @@ local function system(info)
 		query_1 = world:query(A, B):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, a, b in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		local B_1 = field_1[B]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local b = B_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -958,7 +1308,13 @@ local function system(info)
 		query_1 = world:query(A, B):with(C):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -984,7 +1340,13 @@ local function system(info)
 		query_1 = world:query(A):without(C):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -1011,7 +1373,13 @@ local function system(info)
 		query_1 = world:query(A):with(B):without(C):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for id in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local id = entities_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -1035,7 +1403,16 @@ local function system(info)
 		query_1 = world:query(tbl.E):cached()
 		archetypes_1 = query_1:archetypes()
 	end
-	for e, e2 in query_1 do
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local _a = field_1[tbl.E]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local e2 = _a[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -1053,7 +1430,12 @@ local B = _ecs.B
 local function system(info)
 	local _binding = info
 	local world = _binding.world
-	for _ in world:query(A, B):cached() do
+	for _, archetype_1 in world:query(A, B):cached():archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -1072,7 +1454,12 @@ local C = _ecs.C
 local function system(info)
 	local _binding = info
 	local world = _binding.world
-	for _ in world:query(A):with(B):without(C):cached() do
+	for _, archetype_1 in world:query(A):with(B):without(C):cached():archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
