@@ -1,5 +1,257 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`global world queries > should add world invalidation checks 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local query_1 = world:query(A, B, C):cached()
+local archetypes_1 = query_1:archetypes()
+local query_2 = world:query(A, B):cached()
+local archetypes_2 = query_2:archetypes()
+local function system()
+	for e1 in query_1 do
+		for e2 in query_2 do
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should be able to use a component with an unnameable type 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local D = _ecs.D
+local world = _ecs.world
+local query_1 = world:query(D):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for e, d in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should be able to use pairs 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local pair = TS.import(script, script.Parent, "include", "node_modules", "@rbxts", "jecs", "jecs").pair
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local query_1 = world:query(pair(A, B)):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for _ in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should handle break statements 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local query_1 = world:query(A, B):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for e, a, b in query_1 do
+		if math.random() > 0.5 then
+			break
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should handle nested break statements 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local query_1 = world:query(A, B, C):cached()
+local archetypes_1 = query_1:archetypes()
+local query_2 = world:query(A, B):cached()
+local archetypes_2 = query_2:archetypes()
+local function system()
+	for e1 in query_1 do
+		for e2 in query_2 do
+			if math.random() > 0.5 then
+				break
+			end
+		end
+		if math.random() > 0.5 then
+			break
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should handle nested queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local query_1 = world:query(A, B, C):cached()
+local archetypes_1 = query_1:archetypes()
+local query_2 = world:query(A, B):cached()
+local archetypes_2 = query_2:archetypes()
+local function system()
+	for e1 in query_1 do
+		for e2 in query_2 do
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should not cache a non-static query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local function system()
+	local comps = if math.random() > 0.5 then { A, B } else { B, C }
+	for _ in world:query(unpack(comps)) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should not cache an opted-out query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local function system()
+	for _ in world:query(A, B) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should optimize basic scoped query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local query_1 = world:query(A, B):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for e, a, b in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should optimize query with .with() modifier 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local query_1 = world:query(A, B):with(C):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should optimize query with .without() modifier 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local C = _ecs.C
+local world = _ecs.world
+local query_1 = world:query(A):without(C):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > should optimize query with both modifiers 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local query_1 = world:query(A):with(B):without(C):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
 exports[`non-transformable code > should not transform code without jecs queries 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local function add(a, b)
@@ -11,7 +263,7 @@ return {
 "
 `;
 
-exports[`scoped world queries > should add world invalidation checks 1`] = `
+exports[`scoped world queries with destructuring parameter > should add world invalidation checks 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -43,7 +295,56 @@ return {
 "
 `;
 
-exports[`scoped world queries > should handle break statements 1`] = `
+exports[`scoped world queries with destructuring parameter > should be able to use a component with an unnameable type 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local D = TS.import(script, script.Parent, "ecs").D
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(_param)
+	local world = _param.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(D):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for e, d in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should be able to use pairs 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local pair = TS.import(script, script.Parent, "include", "node_modules", "@rbxts", "jecs", "jecs").pair
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(_param)
+	local world = _param.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(pair(A, B)):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for _ in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should handle break statements 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -71,22 +372,33 @@ return {
 "
 `;
 
-exports[`scoped world queries > should handle direct world parameter 1`] = `
+exports[`scoped world queries with destructuring parameter > should handle nested break statements 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
 local A = _ecs.A
 local B = _ecs.B
+local C = _ecs.C
 local query_1
 local archetypes_1
 local worldKey_1
-local function system(world)
+local query_2
+local archetypes_2
+local function system(_param)
+	local world = _param.world
 	if worldKey_1 ~= world then
 		worldKey_1 = world
-		query_1 = world:query(A, B):cached()
+		query_1 = world:query(A, B, C):cached()
 		archetypes_1 = query_1:archetypes()
+		query_2 = world:query(A, B):cached()
+		archetypes_2 = query_2:archetypes()
 	end
-	for e, a, b in query_1 do
+	for e1 in query_1 do
+		for e2 in query_2 do
+			if math.random() > 0.5 then
+				break
+			end
+		end
 		if math.random() > 0.5 then
 			break
 		end
@@ -98,7 +410,7 @@ return {
 "
 `;
 
-exports[`scoped world queries > should handle nested queries 1`] = `
+exports[`scoped world queries with destructuring parameter > should handle nested queries 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -130,7 +442,43 @@ return {
 "
 `;
 
-exports[`scoped world queries > should optimize basic scoped query 1`] = `
+exports[`scoped world queries with destructuring parameter > should not cache a non-static query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	local comps = if math.random() > 0.5 then { A, B } else { B, C }
+	for _ in world:query(unpack(comps)) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should not cache an opted-out query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(_param)
+	local world = _param.world
+	for _ in world:query(A, B) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should optimize basic scoped query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -155,7 +503,7 @@ return {
 "
 `;
 
-exports[`scoped world queries > should optimize query with .with() modifier 1`] = `
+exports[`scoped world queries with destructuring parameter > should optimize query with .with() modifier 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -181,7 +529,7 @@ return {
 "
 `;
 
-exports[`scoped world queries > should optimize query with .without() modifier 1`] = `
+exports[`scoped world queries with destructuring parameter > should optimize query with .without() modifier 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -206,7 +554,7 @@ return {
 "
 `;
 
-exports[`scoped world queries > should optimize query with both modifiers 1`] = `
+exports[`scoped world queries with destructuring parameter > should optimize query with both modifiers 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local _ecs = TS.import(script, script.Parent, "ecs")
@@ -218,6 +566,335 @@ local archetypes_1
 local worldKey_1
 local function system(_param)
 	local world = _param.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A):with(B):without(C):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should add world invalidation checks 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local query_1
+local archetypes_1
+local worldKey_1
+local query_2
+local archetypes_2
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A, B, C):cached()
+		archetypes_1 = query_1:archetypes()
+		query_2 = world:query(A, B):cached()
+		archetypes_2 = query_2:archetypes()
+	end
+	for e1 in query_1 do
+		for e2 in query_2 do
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should be able to use a component with an unnameable type 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local D = TS.import(script, script.Parent, "ecs").D
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(D):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for e, d in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should be able to use pairs 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local pair = TS.import(script, script.Parent, "include", "node_modules", "@rbxts", "jecs", "jecs").pair
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(pair(A, B)):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for _ in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should handle break statements 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A, B):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for e, a, b in query_1 do
+		if math.random() > 0.5 then
+			break
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should handle nested break statements 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local query_1
+local archetypes_1
+local worldKey_1
+local query_2
+local archetypes_2
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A, B, C):cached()
+		archetypes_1 = query_1:archetypes()
+		query_2 = world:query(A, B):cached()
+		archetypes_2 = query_2:archetypes()
+	end
+	for e1 in query_1 do
+		for e2 in query_2 do
+			if math.random() > 0.5 then
+				break
+			end
+		end
+		if math.random() > 0.5 then
+			break
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should handle nested queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local query_1
+local archetypes_1
+local worldKey_1
+local query_2
+local archetypes_2
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A, B, C):cached()
+		archetypes_1 = query_1:archetypes()
+		query_2 = world:query(A, B):cached()
+		archetypes_2 = query_2:archetypes()
+	end
+	for e1 in query_1 do
+		for e2 in query_2 do
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should not cache a non-static query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	local comps = if math.random() > 0.5 then { A, B } else { B, C }
+	for _ in world:query(unpack(comps)) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should not cache an opted-out query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	for _ in world:query(A, B) do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should optimize basic scoped query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A, B):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for e, a, b in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should optimize query with .with() modifier 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A, B):with(C):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should optimize query with .without() modifier 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local C = _ecs.C
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A):without(C):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should optimize query with both modifiers 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
 	if worldKey_1 ~= world then
 		worldKey_1 = world
 		query_1 = world:query(A):with(B):without(C):cached()

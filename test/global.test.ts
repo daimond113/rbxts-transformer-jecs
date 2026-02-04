@@ -2,118 +2,103 @@ import { describe, it } from "vitest"
 import { compile } from "./index.js"
 import { unindent } from "@antfu/utils"
 
-describe("scoped world queries", () => {
-	it("should optimize basic scoped query", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B } from "./ecs"
+const fileHeader = `
+	import { World, pair } from "@rbxts/jecs"
+	import { A, B, C, D, world } from "./ecs"
+`
 
-			export function system({ world }: { world: World }) {
-				for (const [e, a, b] of world.query(A, B)) {}
+const sharedCases = {
+	"should optimize basic scoped query": `
+		for (const [e, a, b] of world.query(A, B)) {}
+	`,
+	"should optimize query with .with() modifier": `
+		for (const [id] of world.query(A, B).with(C)) {}
+	`,
+	"should optimize query with .without() modifier": `
+		for (const [id] of world.query(A).without(C)) {}
+	`,
+	"should optimize query with both modifiers": `
+		for (const [id] of world.query(A).with(B).without(C)) {}
+	`,
+	"should handle nested queries": `
+		for (const [e1] of world.query(A, B, C)) {
+			for (const [e2] of world.query(A, B)) {}
+		}
+	`,
+	"should handle break statements": `
+		for (const [e, a, b] of world.query(A, B)) {
+			if (math.random() > 0.5) break
+		}
+	`,
+	"should handle nested break statements": `
+		for (const [e1] of world.query(A, B, C)) {
+			for (const [e2] of world.query(A, B)) {
+				if (math.random() > 0.5) break
 			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
+			if (math.random() > 0.5) break
+		}
+	`,
+	"should add world invalidation checks": `
+		for (const [e1] of world.query(A, B, C)) {
+			for (const [e2] of world.query(A, B)) {}
+		}
+	`,
+	"should be able to use a component with an unnameable type": `
+		for (const [e, d] of world.query(D)) {}
+	`,
+	"should be able to use pairs": `
+		for (const [,] of world.query(pair(A, B))) {}
+	`,
+	"should not cache an opted-out query": `
+		for (const [,] of /* no-cache */ world.query(A, B)) {}
+	`,
+	"should not cache a non-static query": `
+		const comps = math.random() > 0.5 ? [A, B] : [B, C]
+		for (const [,] of world.query(...comps)) {}
+	`,
+}
 
-	it("should optimize query with .with() modifier", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B, C } from "./ecs"
-
-			export function system({ world }: { world: World }) {
-				for (const [id] of world.query(A, B).with(C)) {}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
-
-	it("should optimize query with .without() modifier", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, C } from "./ecs"
-
-			export function system({ world }: { world: World }) {
-				for (const [id] of world.query(A).without(C)) {}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
-
-	it("should optimize query with both modifiers", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B, C } from "./ecs"
-
-			export function system({ world }: { world: World }) {
-				for (const [id] of world.query(A).with(B).without(C)) {}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
-
-	it("should handle nested queries", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B, C } from "./ecs"
-
-			export function system({ world }: { world: World }) {
-				for (const [e1] of world.query(A, B, C)) {
-					for (const [e2] of world.query(A, B)) {}
+describe("scoped world queries with destructuring parameter", () => {
+	for (const [name, code] of Object.entries(sharedCases)) {
+		it(name, async ({ expect }) => {
+			const output = await compile(`
+				${fileHeader}
+				export function system({ world }: { world: World }) {
+					${code}
 				}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
+			`)
+			expect(output).toMatchSnapshot()
+		})
+	}
+})
 
-	it("should handle break statements", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B } from "./ecs"
-
-			export function system({ world }: { world: World }) {
-				for (const [e, a, b] of world.query(A, B)) {
-					if (math.random() > 0.5) break
+describe("scoped world queries with destructuring statement", () => {
+	for (const [name, code] of Object.entries(sharedCases)) {
+		it(name, async ({ expect }) => {
+			const output = await compile(`
+				${fileHeader}
+				export function system(info: { world: World }) {
+					const { world } = info
+					${code}
 				}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
+			`)
+			expect(output).toMatchSnapshot()
+		})
+	}
+})
 
-	it("should add world invalidation checks", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B, C } from "./ecs"
-
-			export function system({ world }: { world: World }) {
-				for (const [e1] of world.query(A, B, C)) {
-					for (const [e2] of world.query(A, B)) {}
+describe("global world queries", () => {
+	for (const [name, code] of Object.entries(sharedCases)) {
+		it(name, async ({ expect }) => {
+			const output = await compile(`
+				${fileHeader}
+				export function system() {
+					${code}
 				}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
-
-	it("should handle direct world parameter", async ({ expect }) => {
-		const code = unindent`
-			import type { World } from "@rbxts/jecs"
-			import { A, B } from "./ecs"
-
-			export function system(world: World) {
-				for (const [e, a, b] of world.query(A, B)) {
-					if (math.random() > 0.5) break
-				}
-			}
-		`
-		const output = await compile(code)
-		expect(output).toMatchSnapshot()
-	})
+			`)
+			expect(output).toMatchSnapshot()
+		})
+	}
 })
 
 describe("non-transformable code", () => {

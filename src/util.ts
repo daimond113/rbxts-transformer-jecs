@@ -86,8 +86,8 @@ export function staticCtToTypeNode(state: TransformState, node: ts.Node): ts.Typ
 	} else if (ts.isCallExpression(node)) {
 		return state.jecsType(
 			"Pair",
-			staticCtToTypeNode(state, node.arguments[0]),
-			staticCtToTypeNode(state, node.arguments[1]),
+			state.jecsType("InferComponent", staticCtToTypeNode(state, node.arguments[0])),
+			state.jecsType("InferComponent", staticCtToTypeNode(state, node.arguments[1])),
 		)
 	}
 

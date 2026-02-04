@@ -38,5 +38,12 @@ export const compile = async (source: string): Promise<string> => {
 		`,
 	)
 
-	return project.compileSource(source + "\n;export {};")
+	try {
+		return project.compileSource(source + "\n;export {};")
+	} catch (e) {
+		if (typeof e === "object" && e !== null) {
+			throw e.toString()
+		}
+		throw e
+	}
 }

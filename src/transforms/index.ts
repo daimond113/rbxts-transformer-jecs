@@ -133,9 +133,10 @@ export class TransformState {
 	}
 
 	jecsType(typeName: "World"): ts.TypeNode
+	jecsType(typeName: "InferComponent", ...args: [ts.TypeNode]): ts.TypeNode
 	jecsType(typeName: "Pair", ...args: [ts.TypeNode, ts.TypeNode]): ts.TypeNode
 	jecsType(typeName: "CachedQuery", ...args: ts.TypeNode[]): ts.TypeNode
-	jecsType(typeName: "CachedQuery" | "World" | "Pair", ...args: ts.TypeNode[]): ts.TypeNode {
+	jecsType(typeName: "CachedQuery" | "World" | "Pair" | "InferComponent", ...args: ts.TypeNode[]): ts.TypeNode {
 		return ts.factory.createImportTypeNode(
 			ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(this.config.jecsPackage)),
 			undefined,
