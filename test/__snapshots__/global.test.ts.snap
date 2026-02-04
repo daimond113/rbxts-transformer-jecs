@@ -224,7 +224,12 @@ local C = _ecs.C
 local world = _ecs.world
 local function system()
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _ in world:query(unpack(comps)) do
+	for _, archetype_1 in world:query(unpack(comps)):archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -710,7 +715,12 @@ local C = _ecs.C
 local function system(_param)
 	local world = _param.world
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _ in world:query(unpack(comps)) do
+	for _, archetype_1 in world:query(unpack(comps)):archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
@@ -1221,7 +1231,12 @@ local function system(info)
 	local _binding = info
 	local world = _binding.world
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _ in world:query(unpack(comps)) do
+	for _, archetype_1 in world:query(unpack(comps)):archetypes() do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			do
+			end
+		end
 	end
 end
 return {
