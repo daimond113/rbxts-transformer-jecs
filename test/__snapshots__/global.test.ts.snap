@@ -252,6 +252,24 @@ return {
 "
 `;
 
+exports[`global world queries > should support table property access 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local tbl = _ecs.tbl
+local world = _ecs.world
+local query_1 = world:query(tbl.E):cached()
+local archetypes_1 = query_1:archetypes()
+local function system()
+	for e, e2 in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
 exports[`global world queries > shouldn't cache a manually cached query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -607,6 +625,29 @@ local function system(_param)
 		archetypes_1 = query_1:archetypes()
 	end
 	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should support table property access 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local tbl = TS.import(script, script.Parent, "ecs").tbl
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(_param)
+	local world = _param.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(tbl.E):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for e, e2 in query_1 do
 	end
 end
 return {
@@ -971,6 +1012,30 @@ local function system(info)
 		archetypes_1 = query_1:archetypes()
 	end
 	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should support table property access 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local tbl = TS.import(script, script.Parent, "ecs").tbl
+local query_1
+local archetypes_1
+local worldKey_1
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(tbl.E):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for e, e2 in query_1 do
 	end
 end
 return {

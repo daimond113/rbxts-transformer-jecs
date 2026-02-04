@@ -37,6 +37,9 @@ export const compile = async (source: string): Promise<string> => {
 		export const C = world.component<boolean>()
 		type Unnameable = { readonly __unique: unique symbol }
 		export const D = world.component<Unnameable>()
+		export const tbl = {
+			E: world.component<Unnameable>(),
+		}
 		`,
 	)
 

@@ -3,7 +3,7 @@ import { compile } from "./index.js"
 
 const fileHeader = `
 	import { World, pair } from "@rbxts/jecs"
-	import { A, B, C, D, world } from "./ecs"
+	import { A, B, C, D, tbl, world } from "./ecs"
 `
 
 const sharedCases = {
@@ -60,6 +60,9 @@ const sharedCases = {
 	`,
 	"shouldn't cache a manually cached query with modifiers": `
 		for (const [,] of world.query(A).with(B).without(C).cached()) {}
+	`,
+	"should support table property access": `
+		for (const [e, e2] of world.query(tbl.E)) {}
 	`,
 }
 
