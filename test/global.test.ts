@@ -1,6 +1,5 @@
 import { describe, it } from "vitest"
 import { compile } from "./index.js"
-import { unindent } from "@antfu/utils"
 
 const fileHeader = `
 	import { World, pair } from "@rbxts/jecs"
@@ -103,7 +102,7 @@ describe("global world queries", () => {
 
 describe("non-transformable code", () => {
 	it("should not transform code without jecs queries", async ({ expect }) => {
-		const code = unindent`
+		const code = `
 			export function add(a: number, b: number) {
 				return a + b
 			}
