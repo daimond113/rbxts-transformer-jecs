@@ -7,17 +7,16 @@ export const compile = async (source: string): Promise<string> => {
 	const project = new VirtualProject()
 	project.tsTransformers.push((program) => transformer(program, { resolutionHost: project["compilerHost"] }))
 
-	const files = import.meta.glob("../node_modules/@rbxts/**/*", {
+	const files = import.meta.glob("../node_modules/@rbxts/**/{package.json,*.d.ts}", {
 		eager: true,
 		query: "?raw",
 		import: "default",
 	})
 	for (const [path, content] of Object.entries(files)) {
-		const isPackageJson = path.endsWith("package.json")
-		if (!path.endsWith(".d.ts") && !isPackageJson) continue
+		const isDefinition = path.endsWith(".d.ts")
 		const absolutePath = path.replace("../", "/")
 		project.vfs.writeFile(absolutePath, content as string)
-		if (isPackageJson) {
+		if (!isDefinition) {
 			const pkgJson = JSON.parse(content as string)
 			const pkgName = absolutePath.split("/").slice(-3, -1).join("/")
 			const mainPath = resolve(`/${pkgName}`, pkgJson.main ?? "").substring(1)
@@ -27,7 +26,7 @@ export const compile = async (source: string): Promise<string> => {
 	}
 
 	project.vfs.writeFile(
-		"/ecs.ts",
+		"/src/ecs.ts",
 		`
 		import { world as World } from "@rbxts/jecs"
 		export const world = World()
