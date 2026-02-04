@@ -5,7 +5,9 @@ import { resolve } from "path/posix"
 
 export const compile = async (source: string): Promise<string> => {
 	const project = new VirtualProject()
-	project.tsTransformers.push((program) => transformer(program, { resolutionHost: project["compilerHost"] }))
+	project.tsTransformers.push((program) =>
+		transformer(program, { resolutionHost: project["compilerHost"], silent: true }),
+	)
 
 	const files = import.meta.glob("../node_modules/@rbxts/**/{package.json,*.d.ts}", {
 		eager: true,
