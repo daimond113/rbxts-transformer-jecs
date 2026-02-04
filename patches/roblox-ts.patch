@@ -16,10 +16,10 @@ index a1fb900da79b0b342d2da6272d347f4db57f1bd3..db076a0c7620c38870f8210e8904c9bc
      compileSource(source: string): string;
      setMapping(typings: string, main: string): void;
 diff --git a/out/Project/classes/VirtualProject.js b/out/Project/classes/VirtualProject.js
-index da18a9d0f5afa55dc58bff2c8ee01bc50d8205c9..8c657611d11fe9662f09481dd8d09b397d2d8f48 100644
+index da18a9d0f5afa55dc58bff2c8ee01bc50d8205c9..0acbda5d5aec47ee2652f1a1b21d3bea95e5908c 100644
 --- a/out/Project/classes/VirtualProject.js
 +++ b/out/Project/classes/VirtualProject.js
-@@ -84,6 +84,7 @@ class VirtualProject {
+@@ -84,23 +84,42 @@ class VirtualProject {
              },
          });
          this.pkgRojoResolvers = this.compilerOptions.typeRoots.map(rojo_resolver_1.RojoResolver.synthetic);
@@ -27,21 +27,47 @@ index da18a9d0f5afa55dc58bff2c8ee01bc50d8205c9..8c657611d11fe9662f09481dd8d09b39
      }
      compileSource(source) {
          this.vfs.writeFile(PLAYGROUND_PATH, source);
-@@ -94,8 +95,16 @@ class VirtualProject {
-         this.typeChecker = this.program.getTypeChecker();
-         const services = (0, createTransformServices_1.createTransformServices)(this.typeChecker);
-         const pathTranslator = new path_translator_1.PathTranslator(ROOT_DIR, OUT_DIR, undefined, false, this.data.projectOptions.luau);
--        const sourceFile = this.program.getSourceFile(PLAYGROUND_PATH);
-+        let sourceFile = this.program.getSourceFile(PLAYGROUND_PATH);
-         (0, assert_1.assert)(sourceFile);
+         const rootNames = this.vfs
+             .getFilePaths()
+             .filter(v => v.endsWith(typescript_1.default.Extension.Ts) || v.endsWith(typescript_1.default.Extension.Tsx) || v.endsWith(typescript_1.default.Extension.Dts));
+-        this.program = typescript_1.default.createProgram(rootNames, this.compilerOptions, this.compilerHost, this.program);
+-        this.typeChecker = this.program.getTypeChecker();
++        const newProject = () => {
++            this.program = typescript_1.default.createProgram(rootNames, this.compilerOptions, this.compilerHost, this.program);
++            this.typeChecker = this.program.getTypeChecker();
++        }
++        newProject();
++        const diagnostics = new Array();
++        const getSourceFile = () => {
++            const sourceFile = this.program.getSourceFile(PLAYGROUND_PATH);
++            (0, assert_1.assert)(sourceFile);
++            diagnostics.push(...typescript_1.default.getPreEmitDiagnostics(this.program, sourceFile));
++            diagnostics.push(...(0, getCustomPreEmitDiagnostics_1.getCustomPreEmitDiagnostics)(this.data, sourceFile));
++            if ((0, hasErrors_1.hasErrors)(diagnostics))
++                throw new DiagnosticError_1.DiagnosticError(diagnostics);
++            return sourceFile;
++        }
++        let sourceFile = getSourceFile();
 +        if (this.tsTransformers.length) {
 +            const result = typescript_1.default.transform(
 +                sourceFile,
 +                this.tsTransformers.map(t => t(this.program)),
 +                this.compilerOptions
 +            );
-+            sourceFile = result.transformed[0];
++            const source = typescript_1.default.createPrinter().printFile(result.transformed[0]);
++            this.vfs.writeFile(sourceFile.fileName, source);
++            newProject();
++            sourceFile = getSourceFile();
 +        }
-         const diagnostics = new Array();
-         diagnostics.push(...typescript_1.default.getPreEmitDiagnostics(this.program, sourceFile));
-         diagnostics.push(...(0, getCustomPreEmitDiagnostics_1.getCustomPreEmitDiagnostics)(this.data, sourceFile));
+         const services = (0, createTransformServices_1.createTransformServices)(this.typeChecker);
+         const pathTranslator = new path_translator_1.PathTranslator(ROOT_DIR, OUT_DIR, undefined, false, this.data.projectOptions.luau);
+-        const sourceFile = this.program.getSourceFile(PLAYGROUND_PATH);
+-        (0, assert_1.assert)(sourceFile);
+-        const diagnostics = new Array();
+-        diagnostics.push(...typescript_1.default.getPreEmitDiagnostics(this.program, sourceFile));
+-        diagnostics.push(...(0, getCustomPreEmitDiagnostics_1.getCustomPreEmitDiagnostics)(this.data, sourceFile));
+-        if ((0, hasErrors_1.hasErrors)(diagnostics))
+-            throw new DiagnosticError_1.DiagnosticError(diagnostics);
+         const multiTransformState = new TSTransformer_1.MultiTransformState();
+         const runtimeLibRbxPath = undefined;
+         const projectType = this.data.projectOptions.type;

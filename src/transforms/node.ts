@@ -10,5 +10,5 @@ export function transformNode(state: TransformState, node: ts.Node): ts.Node | t
 		return transformStatement(state, node)
 	}
 
-	return ts.visitEachChild(node, (newNode) => transformNode(state, newNode), state.context)
+	return state.transform(node)
 }

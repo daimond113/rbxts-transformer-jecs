@@ -77,7 +77,7 @@ describe("scoped world queries", () => {
 
 			export function system({ world }: { world: World }) {
 				for (const [e, a, b] of world.query(A, B)) {
-					if (Math.random() > 0.5) break
+					if (math.random() > 0.5) break
 				}
 			}
 		`
@@ -107,7 +107,7 @@ describe("scoped world queries", () => {
 
 			export function system(world: World) {
 				for (const [e, a, b] of world.query(A, B)) {
-					if (Math.random() > 0.5) break
+					if (math.random() > 0.5) break
 				}
 			}
 		`

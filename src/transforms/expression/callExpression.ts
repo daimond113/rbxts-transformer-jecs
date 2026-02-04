@@ -60,7 +60,26 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 		undefined,
 	)
 
-	if (cache !== state.fileCache()) {
+	if (worldDecls.length) {
+		const queryVarDecl = ts.factory.createVariableDeclaration(
+			queryIdentifier,
+			undefined,
+			undefined,
+			expressionCached,
+		)
+		const archetypesVarDecl = ts.factory.createVariableDeclaration(
+			archetypesIdentifier,
+			undefined,
+			undefined,
+			queryArchetypes,
+		)
+		cache.outerResult(
+			ts.factory.createVariableStatement(
+				undefined,
+				ts.factory.createVariableDeclarationList([queryVarDecl, archetypesVarDecl], ts.NodeFlags.Const),
+			),
+		)
+	} else {
 		const queryVarDecl = ts.factory.createVariableDeclaration(
 			queryIdentifier,
 			undefined,
@@ -92,25 +111,6 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 			ts.factory.createExpressionStatement(queryAssignment),
 			ts.factory.createExpressionStatement(archetypesAssignment),
 		])
-	} else {
-		const queryVarDecl = ts.factory.createVariableDeclaration(
-			queryIdentifier,
-			undefined,
-			undefined,
-			expressionCached,
-		)
-		const archetypesVarDecl = ts.factory.createVariableDeclaration(
-			archetypesIdentifier,
-			undefined,
-			undefined,
-			queryArchetypes,
-		)
-		cache.outerResult(
-			ts.factory.createVariableStatement(
-				undefined,
-				ts.factory.createVariableDeclarationList([queryVarDecl, archetypesVarDecl], ts.NodeFlags.Const),
-			),
-		)
 	}
 
 	return queryIdentifier

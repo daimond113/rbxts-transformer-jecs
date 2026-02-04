@@ -116,10 +116,6 @@ export class TransformState {
 		return ts.visitEachChild(node, (newNode) => transformNode(this, newNode), this.context)
 	}
 
-	transformNode<T extends ts.Node>(node: T): T {
-		return ts.visitNode(node, (newNode) => transformNode(this, newNode)) as T
-	}
-
 	private cacheStack = new Array<Cache>()
 	captureCache<T>(node: ts.Node, cb: () => T): [T, Cache] {
 		this.cacheStack.push(new Cache(this, node))
@@ -144,7 +140,7 @@ export class TransformState {
 			ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(this.config.jecsPackage)),
 			undefined,
 			ts.factory.createIdentifier(typeName),
-			args,
+			args.length ? args : undefined,
 			false,
 		)
 	}
