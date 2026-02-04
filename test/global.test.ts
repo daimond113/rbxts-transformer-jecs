@@ -55,6 +55,12 @@ const sharedCases = {
 		const comps = math.random() > 0.5 ? [A, B] : [B, C]
 		for (const [,] of world.query(...comps)) {}
 	`,
+	"shouldn't cache a manually cached query": `
+		for (const [,] of world.query(A, B).cached()) {}
+	`,
+	"shouldn't cache a manually cached query with modifiers": `
+		for (const [,] of world.query(A).with(B).without(C).cached()) {}
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {

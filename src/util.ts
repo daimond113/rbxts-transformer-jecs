@@ -106,3 +106,8 @@ export function generateQualifiedName(node: ts.PropertyAccessExpression): ts.Qua
 	assert(ts.isIdentifier(node.name)) // can safely assert, because it wouldn't cache if it was a private identifier
 	return ts.factory.createQualifiedName(left, node.name)
 }
+
+// FIXME: because symbols such as Query's are generic, the symbols received from the type checker differ.
+// we should find a better way to compare them, if such a way exists.
+export const genericSymbolsAreEqual = (a: ts.Symbol, b: ts.Symbol) =>
+	a.declarations && b.declarations && a.declarations[0] === b.declarations[0]

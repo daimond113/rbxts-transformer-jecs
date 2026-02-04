@@ -27,6 +27,7 @@ export class TransformState {
 			symbol: ts.Symbol
 			with: ts.Symbol
 			without: ts.Symbol
+			cached: ts.Symbol
 		}
 		cachedQuery: {
 			symbol: ts.Symbol
@@ -60,6 +61,8 @@ export class TransformState {
 	}
 
 	public loadJecsSymbols(sourceFile: ts.SourceFile) {
+		if (this.jecs) return
+
 		const jecsSymbol = ok(
 			this.getPackageSymbol(sourceFile, this.config.jecsPackage),
 			"Unable to extract type information from Jecs",
@@ -86,6 +89,7 @@ export class TransformState {
 					queryType.getProperty("without"),
 					"Unable to find Query.without type information from Jecs",
 				),
+				cached: ok(queryType.getProperty("cached"), "Unable to find Query.cached type information from Jecs"),
 			},
 			cachedQuery: {
 				symbol: ok(

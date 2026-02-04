@@ -1,6 +1,12 @@
 import ts from "typescript"
 import type { TransformState } from "../index.js"
-import { findMatchingChild, getLeadingTrivia, staticCtToTypeNode, staticDeclarations } from "../../util.js"
+import {
+	findMatchingChild,
+	genericSymbolsAreEqual,
+	getLeadingTrivia,
+	staticCtToTypeNode,
+	staticDeclarations,
+} from "../../util.js"
 
 export function transformCallExpression(
 	state: TransformState,
@@ -19,6 +25,14 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 		queryCreation = findMatchingChild(expression, (node) => isQueryCreation(state, node))
 	}
 	if (!queryCreation) return
+
+	let parent = queryCreation.parent
+	while (ts.isPropertyAccessExpression(parent) && ts.isCallExpression(parent.parent)) {
+		const symbol = state.typeChecker.getSymbolAtLocation(parent)
+		// if the query is manually cached, do not cache it again
+		if (symbol && genericSymbolsAreEqual(symbol, state.jecs.query.cached)) return
+		parent = parent.parent.parent
+	}
 
 	const [valid, componentDecls, queryComponentsType] = parseQuery(state, queryCreation)
 	if (!valid) {
@@ -138,10 +152,7 @@ function parseQuery(
 
 			// FIXME: because Query is generic, the symbols will be different.
 			// we compare the declarations because as far as i know there is no other way.
-			const container = symbols.find(
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				(s) => s.declarations![0] === symbol.declarations![0],
-			)
+			const container = symbols.find((s) => genericSymbolsAreEqual(s, symbol))
 			if (container) {
 				for (const ct of node.arguments) {
 					const declarations = staticDeclarations(state, ct)

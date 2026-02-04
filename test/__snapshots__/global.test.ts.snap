@@ -252,6 +252,41 @@ return {
 "
 `;
 
+exports[`global world queries > shouldn't cache a manually cached query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local function system()
+	for _ in world:query(A, B):cached() do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`global world queries > shouldn't cache a manually cached query with modifiers 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local function system()
+	for _ in world:query(A):with(B):without(C):cached() do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
 exports[`non-transformable code > should not transform code without jecs queries 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local function add(a, b)
@@ -572,6 +607,41 @@ local function system(_param)
 		archetypes_1 = query_1:archetypes()
 	end
 	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > shouldn't cache a manually cached query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(_param)
+	local world = _param.world
+	for _ in world:query(A, B):cached() do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > shouldn't cache a manually cached query with modifiers 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(_param)
+	local world = _param.world
+	for _ in world:query(A):with(B):without(C):cached() do
 	end
 end
 return {
@@ -901,6 +971,43 @@ local function system(info)
 		archetypes_1 = query_1:archetypes()
 	end
 	for id in query_1 do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > shouldn't cache a manually cached query 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	for _ in world:query(A, B):cached() do
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > shouldn't cache a manually cached query with modifiers 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	for _ in world:query(A):with(B):without(C):cached() do
 	end
 end
 return {
