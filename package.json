@@ -10,8 +10,10 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "vitest",
-    "prepare": "pnpm build"
+    "prepare": "pnpm build",
+    "lint": "eslint src/**/*.ts test/**/*.ts",
+    "test": "vitest --run",
+    "test:watch": "vitest --watch"
   },
   "files": [
     "out/src"
