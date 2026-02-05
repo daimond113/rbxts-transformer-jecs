@@ -121,20 +121,35 @@ export class TransformState {
 		return ts.visitEachChild(node, (newNode) => transformNode(this, newNode), this.context)
 	}
 
-	private cacheStack = new Array<Cache>()
-	captureCache<T>(node: ts.Node, cb: () => T): [T, Cache] {
-		this.cacheStack.push(new Cache(this, node))
+	private cacheStack = new Array<[ts.Node, Map<ts.Symbol, Cache>]>()
+	captureCache<T>(node: ts.Node, cb: () => T): [T, Cache[]] {
+		this.cacheStack.push([node, new Map()])
 		const result = cb()
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return [result, this.cacheStack.pop()!]
+		return [result, Array.from(this.cacheStack.pop()![1].values())]
 	}
 
-	currentCache(): Cache {
-		return this.cacheStack[this.cacheStack.length - 1]
+	private getCache(pos: number, world: ts.Node): Cache {
+		const [, cacheMap] = this.cacheStack[pos]
+		const worldSymbol = this.typeChecker.getSymbolAtLocation(world)
+		if (!worldSymbol) {
+			throw new Error("Unable to find symbol for world")
+		}
+		const cache = cacheMap.get(worldSymbol) ?? new Cache(this)
+		cacheMap.set(worldSymbol, cache)
+		return cache
 	}
 
-	fileCache(): Cache {
-		return this.cacheStack[0]
+	currentCache(world: ts.Node): Cache {
+		return this.getCache(this.cacheStack.length - 1, world)
+	}
+
+	currentCacheNode(): ts.Node {
+		return this.cacheStack[this.cacheStack.length - 1][0]
+	}
+
+	fileCache(world: ts.Node): Cache {
+		return this.getCache(0, world)
 	}
 
 	jecsType(typeName: "World"): ts.TypeNode
@@ -162,10 +177,7 @@ class Cache {
 	private condition: ts.Expression | undefined
 	public innerResultMarker: ts.Statement | undefined
 
-	constructor(
-		private state: TransformState,
-		public node: ts.Node,
-	) {}
+	constructor(private state: TransformState) {}
 
 	require(toBeDeclared: ts.Statement | ts.Statement[]) {
 		this.requires.push(...toArray(toBeDeclared))

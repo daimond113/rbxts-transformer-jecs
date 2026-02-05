@@ -1,5 +1,6 @@
 import { describe, it } from "vitest"
 import { compile } from "./index.js"
+import { toArray } from "../src/util.js"
 
 const fileHeader = `
 	import { World, pair } from "@rbxts/jecs"
@@ -68,6 +69,18 @@ const sharedCases = {
 		for (const [e1] of world.query(A)) {}
 		for (const [e2] of world.query(B)) {}
 	`,
+	"should support 2 independent queries with modifiers": `
+		for (const [e1] of world.query(A).with(B)) {}
+		for (const [e2] of world.query(B).without(C)) {}
+	`,
+	"should support 2 systems with the same query": [
+		`
+		for (const [e1] of world.query(A, B)) {}
+		`,
+		`
+		for (const [e2] of world.query(A, B)) {}
+		`,
+	],
 }
 
 describe("scoped world queries with destructuring parameter", () => {
@@ -75,9 +88,9 @@ describe("scoped world queries with destructuring parameter", () => {
 		it(name, async ({ expect }) => {
 			const output = await compile(`
 				${fileHeader}
-				export function system({ world }: { world: World }) {
-					${code}
-				}
+				${toArray(code)
+					.map((s, i) => `export function system${i}({ world }: { world: World }) { ${s} }`)
+					.join("\n")}
 			`)
 			expect(output).toMatchSnapshot()
 		})
@@ -89,10 +102,11 @@ describe("scoped world queries with destructuring statement", () => {
 		it(name, async ({ expect }) => {
 			const output = await compile(`
 				${fileHeader}
-				export function system(info: { world: World }) {
-					const { world } = info
-					${code}
-				}
+				${toArray(code)
+					.map(
+						(s, i) => `export function system${i}(info: { world: World }) { const { world } = info; ${s} }`,
+					)
+					.join("\n")}
 			`)
 			expect(output).toMatchSnapshot()
 		})
@@ -104,9 +118,9 @@ describe("global world queries", () => {
 		it(name, async ({ expect }) => {
 			const output = await compile(`
 				${fileHeader}
-				export function system() {
-					${code}
-				}
+				${toArray(code)
+					.map((s, i) => `export function system${i}() { ${s} }`)
+					.join("\n")}
 			`)
 			expect(output).toMatchSnapshot()
 		})

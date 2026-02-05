@@ -54,8 +54,8 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 	const worldDecls = staticDeclarations(state, world)
 
 	const cache = worldDecls.some((stmt) => stmt.parent.kind === ts.SyntaxKind.SourceFile)
-		? state.fileCache()
-		: state.currentCache()
+		? state.fileCache(world)
+		: state.currentCache(world)
 
 	cache.require(worldDecls)
 	cache.require(componentDecls)

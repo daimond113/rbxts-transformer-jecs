@@ -46,7 +46,7 @@ export const staticDeclarations = (state: TransformState, node: ts.Node, canHave
 			stmt = stmt.parent
 		}
 
-		if (stmt.parent !== state.currentCache().node && stmt.parent.kind !== ts.SyntaxKind.SourceFile) {
+		if (stmt.parent !== state.currentCacheNode() && stmt.parent.kind !== ts.SyntaxKind.SourceFile) {
 			return []
 		}
 

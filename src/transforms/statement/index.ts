@@ -24,7 +24,7 @@ export function transformStatementList(
 ): ts.Statement[] {
 	const endIndices = new Map<ts.Statement, number>()
 
-	const [statements, cache] = state.captureCache(node, () => {
+	const [statements, caches] = state.captureCache(node, () => {
 		const statements: ts.Statement[] = []
 		toTransform.forEach((originalStmt) => {
 			const transformed = transformStatement(state, originalStmt)
@@ -34,23 +34,33 @@ export function transformStatementList(
 		return statements
 	})
 
-	if (cache.innerResultMarker) {
-		statements.forEach((stmt, i) => {
-			const visit: ts.Visitor = (child) => {
-				if (child === cache.innerResultMarker) return cache.toInnerResults()
-				return ts.visitEachChild(child, visit, state.context)
-			}
-			statements[i] = ts.visitEachChild(stmt, visit, state.context)
-		})
-	}
+	let result = statements
+	let offset = 0
 
-	let insertIndex = 0
-	for (const required of cache.requires) {
-		const endIndex = endIndices.get(required) ?? 0
-		if (endIndex > insertIndex) {
-			insertIndex = endIndex
+	for (const cache of caches) {
+		if (cache.innerResultMarker) {
+			result.forEach((stmt, i) => {
+				const visit: ts.Visitor = (child) => {
+					if (child === cache.innerResultMarker) return cache.toInnerResults()
+					return ts.visitEachChild(child, visit, state.context)
+				}
+				result[i] = ts.visitEachChild(stmt, visit, state.context)
+			})
 		}
+
+		const outerResults = cache.toOuterResults()
+
+		let insertIndex = 0
+		for (const required of cache.requires) {
+			const endIndex = endIndices.get(required) ?? 0
+			if (endIndex > insertIndex) {
+				insertIndex = endIndex + offset
+				offset += outerResults.length
+			}
+		}
+
+		result = [...result.slice(0, insertIndex), ...outerResults, ...result.slice(insertIndex)]
 	}
 
-	return [...statements.slice(0, insertIndex), ...cache.toOuterResults(), ...statements.slice(insertIndex)]
+	return result
 }
