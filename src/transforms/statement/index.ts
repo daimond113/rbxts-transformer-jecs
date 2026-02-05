@@ -22,17 +22,27 @@ export function transformStatementList(
 	node: ts.Node,
 	toTransform: ReadonlyArray<ts.Statement>,
 ): ts.Statement[] {
-	const statements: ts.Statement[] = []
 	const endIndices = new Map<ts.Statement, number>()
 
-	const [, cache] = state.captureCache(node, () => {
+	const [statements, cache] = state.captureCache(node, () => {
+		const statements: ts.Statement[] = []
 		toTransform.forEach((originalStmt) => {
 			const transformed = transformStatement(state, originalStmt)
 			statements.push(...transformed)
 			endIndices.set(originalStmt, statements.length)
 		})
-		return []
+		return statements
 	})
+
+	if (cache.innerResultMarker) {
+		statements.forEach((stmt, i) => {
+			const visit: ts.Visitor = (child) => {
+				if (child === cache.innerResultMarker) return cache.toInnerResults()
+				return ts.visitEachChild(child, visit, state.context)
+			}
+			statements[i] = ts.visitEachChild(stmt, visit, state.context)
+		})
+	}
 
 	let insertIndex = 0
 	for (const required of cache.requires) {

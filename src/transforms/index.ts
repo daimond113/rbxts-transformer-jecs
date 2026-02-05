@@ -104,14 +104,15 @@ export class TransformState {
 		}
 	}
 
-	private prereqStack = new Array<Array<ts.Statement | (() => ts.Statement | ts.Statement[])>>()
+	private prereqStack = new Array<Array<ts.Statement>>()
 	capture<T>(cb: () => T): [T, ts.Statement[]] {
 		this.prereqStack.push([])
 		const result = cb()
-		return [result, this.prereqStack.pop()?.flatMap((stmt) => (typeof stmt === "function" ? stmt() : stmt)) ?? []]
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		return [result, this.prereqStack.pop()!]
 	}
 
-	prereq(stmts: ts.Statement | ts.Statement[] | (() => ts.Statement | ts.Statement[])) {
+	prereq(stmts: ts.Statement | ts.Statement[]) {
 		const stack = this.prereqStack[this.prereqStack.length - 1]
 		if (stack) stack.push(...toArray(stmts))
 	}
@@ -159,6 +160,7 @@ class Cache {
 	private innerStatements = new Array<ts.Statement>()
 	private worldKey: ts.Identifier | undefined
 	private condition: ts.Expression | undefined
+	public innerResultMarker: ts.Statement | undefined
 
 	constructor(
 		private state: TransformState,
@@ -174,8 +176,8 @@ class Cache {
 	}
 
 	innerResult(toBeInserted: ts.Statement | ts.Statement[]) {
-		if (!this.innerStatements.length) {
-			this.state.prereq(() => this.toInnerResults())
+		if (!this.innerResultMarker) {
+			this.state.prereq((this.innerResultMarker = ts.factory.createEmptyStatement()))
 		}
 		this.innerStatements.push(...toArray(toBeInserted))
 	}

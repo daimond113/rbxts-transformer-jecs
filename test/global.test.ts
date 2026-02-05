@@ -64,6 +64,10 @@ const sharedCases = {
 	"should support table property access": `
 		for (const [e, e2] of world.query(tbl.E)) {}
 	`,
+	"should support 2 independent queries": `
+		for (const [e1] of world.query(A)) {}
+		for (const [e2] of world.query(B)) {}
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {

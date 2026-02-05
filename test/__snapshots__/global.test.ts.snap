@@ -367,6 +367,41 @@ return {
 "
 `;
 
+exports[`global world queries > should support 2 independent queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local query_1 = world:query(A):cached()
+local archetypes_1 = query_1:archetypes()
+local query_2 = world:query(B):cached()
+local archetypes_2 = query_2:archetypes()
+local function system()
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+			end
+		end
+	end
+	for _, archetype_2 in archetypes_2 do
+		local entities_2 = archetype_2.entities
+		for row_2 = #entities_2, 1, -1 or 1 do
+			local e2 = entities_2[row_2]
+			do
+			end
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
 exports[`global world queries > should support table property access 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -871,6 +906,49 @@ local function system(_param)
 		local entities_1 = archetype_1.entities
 		for row_1 = #entities_1, 1, -1 or 1 do
 			local id = entities_1[row_1]
+			do
+			end
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should support 2 independent queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local query_1
+local archetypes_1
+local worldKey_1
+local query_2
+local archetypes_2
+local function system(_param)
+	local world = _param.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A):cached()
+		archetypes_1 = query_1:archetypes()
+		query_2 = world:query(B):cached()
+		archetypes_2 = query_2:archetypes()
+	end
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+			end
+		end
+	end
+	for _, archetype_2 in archetypes_2 do
+		local entities_2 = archetype_2.entities
+		for row_2 = #entities_2, 1, -1 or 1 do
+			local e2 = entities_2[row_2]
 			do
 			end
 		end
@@ -1392,6 +1470,50 @@ local function system(info)
 		local entities_1 = archetype_1.entities
 		for row_1 = #entities_1, 1, -1 or 1 do
 			local id = entities_1[row_1]
+			do
+			end
+		end
+	end
+end
+return {
+	system = system,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > should support 2 independent queries 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local query_1
+local archetypes_1
+local worldKey_1
+local query_2
+local archetypes_2
+local function system(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A):cached()
+		archetypes_1 = query_1:archetypes()
+		query_2 = world:query(B):cached()
+		archetypes_2 = query_2:archetypes()
+	end
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e1 = entities_1[row_1]
+			do
+			end
+		end
+	end
+	for _, archetype_2 in archetypes_2 do
+		local entities_2 = archetype_2.entities
+		for row_2 = #entities_2, 1, -1 or 1 do
+			local e2 = entities_2[row_2]
 			do
 			end
 		end
