@@ -548,6 +548,24 @@ return {
 "
 `;
 
+exports[`global world queries > shouldn't cache a query that is used outside a loop 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local world = _ecs.world
+local function system0()
+	local q = world:query(A, B)
+	for e in q do
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`non-transformable code > should not transform code without jecs queries 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local function add(a, b)
@@ -1196,6 +1214,24 @@ local function system0(_param)
 			do
 			end
 		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > shouldn't cache a query that is used outside a loop 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system0(_param)
+	local world = _param.world
+	local q = world:query(A, B)
+	for e in q do
 	end
 end
 return {
@@ -1860,6 +1896,25 @@ local function system0(info)
 			do
 			end
 		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring statement > shouldn't cache a query that is used outside a loop 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local function system0(info)
+	local _binding = info
+	local world = _binding.world
+	local q = world:query(A, B)
+	for e in q do
 	end
 end
 return {

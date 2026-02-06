@@ -81,6 +81,10 @@ const sharedCases = {
 		for (const [e2] of world.query(A, B)) {}
 		`,
 	],
+	"shouldn't cache a query that is used outside a loop": `
+		const q = world.query(A, B)
+		for (const [e] of q) {}
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {

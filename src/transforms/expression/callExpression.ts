@@ -33,6 +33,7 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 		if (symbol && genericSymbolsAreEqual(symbol, state.jecs.query.cached)) return
 		parent = parent.parent.parent
 	}
+	if (!ts.isForOfStatement(parent)) return
 
 	const [valid, componentDecls, queryComponents] = parseQuery(state, queryCreation)
 	if (!valid) {
