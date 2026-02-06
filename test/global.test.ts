@@ -117,6 +117,23 @@ describe("scoped world queries with destructuring statement", () => {
 	}
 })
 
+describe("scoped world queries with property access", () => {
+	for (const [name, code] of Object.entries(sharedCases)) {
+		it(name, async ({ expect }) => {
+			const output = await compile(`
+				${fileHeader}
+				${toArray(code)
+					.map(
+						(s, i) =>
+							`export function system${i}(info: { world: World }) { ${s.replaceAll("world.", "info.world.")} }`,
+					)
+					.join("\n")}
+			`)
+			expect(output).toMatchSnapshot()
+		})
+	}
+})
+
 describe("global world queries", () => {
 	for (const [name, code] of Object.entries(sharedCases)) {
 		it(name, async ({ expect }) => {
