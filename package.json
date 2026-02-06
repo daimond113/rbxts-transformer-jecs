@@ -8,9 +8,9 @@
   "license": "MIT",
   "repository": "https://github.com/daimond113/rbxts-transformer-jecs",
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm prepare",
     "watch": "tsc -w",
-    "prepare": "pnpm build",
+    "prepare": "tsc",
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "test": "vitest --run",
     "test:watch": "vitest --watch"
