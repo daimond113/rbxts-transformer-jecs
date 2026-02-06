@@ -7,6 +7,7 @@ import {
 	staticCtToTypeNode,
 	staticDeclarations,
 } from "../../util.js"
+import chalk from "chalk"
 
 export function transformCallExpression(
 	state: TransformState,
@@ -39,7 +40,7 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 	if (!valid) {
 		if (!state.config.silent) {
 			console.warn(
-				`'${componentDecls.getText()}' isn't simple. Query '${expression.getText()}' will not be cached.`,
+				`'${chalk.bold.red(componentDecls.getText())}' isn't simple. Not caching query: \n\t${chalk.yellow(expression.getText())}`,
 			)
 		}
 		return
