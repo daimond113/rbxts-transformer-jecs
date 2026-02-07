@@ -142,7 +142,7 @@ function isQueryCreation(state: TransformState, node: ts.Node): node is ts.CallE
 	)
 }
 
-export function parseQuery(
+function parseQuery(
 	state: TransformState,
 	expression: ts.CallExpression,
 ): [true, ts.Statement[], ts.Expression[]] | [false, ts.Expression, ts.Expression[]] {
@@ -156,8 +156,6 @@ export function parseQuery(
 	const visit = (node: ts.Node): ts.Node | undefined => {
 		if (ts.isCallExpression(node)) {
 			const symbol = state.typeChecker.getSymbolAtLocation(node.expression)
-			// FIXME: because Query is generic, the symbols will be different.
-			// we compare the declarations because as far as i know there is no other way.
 			const container = symbol && symbols.find((s) => genericSymbolsAreEqual(s, symbol))
 			if (container) {
 				for (const ct of node.arguments) {

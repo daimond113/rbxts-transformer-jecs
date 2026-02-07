@@ -224,12 +224,7 @@ local C = _ecs.C
 local world = _ecs.world
 local function system0()
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _, archetype_1 in world:query(unpack(comps)):archetypes() do
-		local entities_1 = archetype_1.entities
-		for row_1 = #entities_1, 1, -1 or 1 do
-			do
-			end
-		end
+	for _ in world:query(unpack(comps)) do
 	end
 end
 return {
@@ -503,6 +498,35 @@ return {
 "
 `;
 
+exports[`global world queries > should traverse through declarations to inline 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local world = _ecs.world
+local function system0()
+	local q1 = world:query(A, B)
+	local q2 = q1:with(C)
+	for _, archetype_1 in q2:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`global world queries > shouldn't cache a manually cached query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -557,7 +581,16 @@ local B = _ecs.B
 local world = _ecs.world
 local function system0()
 	local q = world:query(A, B)
-	for e in q do
+	for _, archetype_1 in q:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -840,12 +873,7 @@ local C = _ecs.C
 local function system0(_param)
 	local world = _param.world
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _, archetype_1 in world:query(unpack(comps)):archetypes() do
-		local entities_1 = archetype_1.entities
-		for row_1 = #entities_1, 1, -1 or 1 do
-			do
-			end
-		end
+	for _ in world:query(unpack(comps)) do
 	end
 end
 return {
@@ -1177,6 +1205,35 @@ return {
 "
 `;
 
+exports[`scoped world queries with destructuring parameter > should traverse through declarations to inline 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system0(_param)
+	local world = _param.world
+	local q1 = world:query(A, B)
+	local q2 = q1:with(C)
+	for _, archetype_1 in q2:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`scoped world queries with destructuring parameter > shouldn't cache a manually cached query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -1231,7 +1288,16 @@ local B = _ecs.B
 local function system0(_param)
 	local world = _param.world
 	local q = world:query(A, B)
-	for e in q do
+	for _, archetype_1 in q:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -1510,12 +1576,7 @@ local function system0(info)
 	local _binding = info
 	local world = _binding.world
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _, archetype_1 in world:query(unpack(comps)):archetypes() do
-		local entities_1 = archetype_1.entities
-		for row_1 = #entities_1, 1, -1 or 1 do
-			do
-			end
-		end
+	for _ in world:query(unpack(comps)) do
 	end
 end
 return {
@@ -1857,6 +1918,36 @@ return {
 "
 `;
 
+exports[`scoped world queries with destructuring statement > should traverse through declarations to inline 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system0(info)
+	local _binding = info
+	local world = _binding.world
+	local q1 = world:query(A, B)
+	local q2 = q1:with(C)
+	for _, archetype_1 in q2:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`scoped world queries with destructuring statement > shouldn't cache a manually cached query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -1914,7 +2005,16 @@ local function system0(info)
 	local _binding = info
 	local world = _binding.world
 	local q = world:query(A, B)
-	for e in q do
+	for _, archetype_1 in q:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {
@@ -2179,12 +2279,7 @@ local B = _ecs.B
 local C = _ecs.C
 local function system0(info)
 	local comps = if math.random() > 0.5 then { A, B } else { B, C }
-	for _, archetype_1 in info.world:query(unpack(comps)):archetypes() do
-		local entities_1 = archetype_1.entities
-		for row_1 = #entities_1, 1, -1 or 1 do
-			do
-			end
-		end
+	for _ in info.world:query(unpack(comps)) do
 	end
 end
 return {
@@ -2506,6 +2601,34 @@ return {
 "
 `;
 
+exports[`scoped world queries with property access > should traverse through declarations to inline 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local B = _ecs.B
+local C = _ecs.C
+local function system0(info)
+	local q1 = info.world:query(A, B)
+	local q2 = q1:with(C)
+	for _, archetype_1 in q2:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`scoped world queries with property access > shouldn't cache a manually cached query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -2557,7 +2680,16 @@ local A = _ecs.A
 local B = _ecs.B
 local function system0(info)
 	local q = info.world:query(A, B)
-	for e in q do
+	for _, archetype_1 in q:archetypes() do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			do
+			end
+		end
 	end
 end
 return {

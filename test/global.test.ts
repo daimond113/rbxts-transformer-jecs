@@ -83,7 +83,12 @@ const sharedCases = {
 	],
 	"shouldn't cache a query that is used outside a loop": `
 		const q = world.query(A, B)
-		for (const [e] of q) {}
+		for (const [e, a] of q) {}
+	`,
+	"should traverse through declarations to inline": `
+		const q1 = world.query(A, B)
+		const q2 = q1.with(C)
+		for (const [e, a] of q2) {}
 	`,
 }
 

@@ -1,7 +1,6 @@
 import ts from "typescript"
 import { TransformState } from "../index.js"
-import { genericSymbolsAreEqual } from "../../util.js"
-import { parseQuery } from "../expression/callExpression.js"
+import { genericSymbolsAreEqual, staticDeclarations } from "../../util.js"
 import { transformExpression } from "../expression/index.js"
 
 export function transformForOfStatement(
@@ -34,7 +33,7 @@ function inlineQueryIterators(
 
 	const archetypes = cached
 		? cached.archetypes
-		: ts.isCallExpression(expression)
+		: ts.isCallExpression(expression) || ts.isIdentifier(expression)
 			? ts.factory.createCallExpression(
 					ts.factory.createPropertyAccessExpression(expression, "archetypes"),
 					undefined,
@@ -44,11 +43,7 @@ function inlineQueryIterators(
 
 	if (!archetypes) return
 
-	const components = cached
-		? cached.components
-		: ts.isCallExpression(expression)
-			? parseQuery(state, expression)[2]
-			: undefined
+	const components = cached ? cached.components : findQueryComponents(state, expression)
 	if (!components) return
 
 	const archetype = ts.factory.createUniqueName("archetype")
@@ -280,4 +275,45 @@ function innerLoop(
 			true,
 		),
 	)
+}
+
+// different from callExpression's parseQuery in that it follows identifiers to their declarations, since the query components aren't directly present on the for-of expression's query
+function findQueryComponents(
+	state: TransformState,
+	expression: ts.Expression,
+	visited = new Set<ts.Node>(),
+): ts.Expression[] | undefined {
+	if (visited.has(expression)) return
+	visited.add(expression)
+
+	if (ts.isCallExpression(expression)) {
+		if (ts.isPropertyAccessExpression(expression.expression)) {
+			const symbol = state.typeChecker.getSymbolAtLocation(expression.expression)
+			if (
+				symbol &&
+				[state.jecs.query.with, state.jecs.query.without, state.jecs.query.cached].some((s) =>
+					genericSymbolsAreEqual(s, symbol),
+				)
+			) {
+				return findQueryComponents(state, expression.expression.expression, visited)
+			}
+		}
+		const symbol = state.typeChecker.getSymbolAtLocation(expression.expression)
+		if (symbol && genericSymbolsAreEqual(state.jecs.world.query, symbol)) {
+			const cts = new Array<ts.Expression>()
+			for (const ct of expression.arguments) {
+				const decls = staticDeclarations(state, ct)
+				if (!decls.length) return
+				cts.push(ct)
+			}
+			return cts
+		}
+	} else if (ts.isIdentifier(expression)) {
+		const symbol = state.typeChecker.getSymbolAtLocation(expression)
+		if (!symbol) return
+
+		const declaration = symbol.valueDeclaration
+		if (!declaration || !ts.isVariableDeclaration(declaration) || !declaration.initializer) return
+		return findQueryComponents(state, declaration.initializer, visited)
+	}
 }
