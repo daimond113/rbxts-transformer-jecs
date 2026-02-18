@@ -255,6 +255,35 @@ return {
 "
 `;
 
+exports[`global world queries > should not crash when an invalid amount of components is used 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local _ecs = TS.import(script, script.Parent, "ecs")
+local A = _ecs.A
+local world = _ecs.world
+local query_1 = world:query(A):cached()
+local archetypes_1 = query_1:archetypes()
+local function system0()
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local illegal = nil
+			do
+				local _ = illegal
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`global world queries > should optimize basic scoped query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -894,6 +923,40 @@ local function system0(_param)
 		local entities_1 = archetype_1.entities
 		for row_1 = #entities_1, 1, -1 or 1 do
 			do
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
+exports[`scoped world queries with destructuring parameter > should not crash when an invalid amount of components is used 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local A = TS.import(script, script.Parent, "ecs").A
+local query_1
+local archetypes_1
+local worldKey_1
+local function system0(_param)
+	local world = _param.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local illegal = nil
+			do
+				local _ = illegal
 			end
 		end
 	end
@@ -1608,6 +1671,41 @@ return {
 "
 `;
 
+exports[`scoped world queries with destructuring statement > should not crash when an invalid amount of components is used 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local A = TS.import(script, script.Parent, "ecs").A
+local query_1
+local archetypes_1
+local worldKey_1
+local function system0(info)
+	local _binding = info
+	local world = _binding.world
+	if worldKey_1 ~= world then
+		worldKey_1 = world
+		query_1 = world:query(A):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local illegal = nil
+			do
+				local _ = illegal
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
 exports[`scoped world queries with destructuring statement > should optimize basic scoped query 1`] = `
 "-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
@@ -2299,6 +2397,39 @@ local function system0(info)
 		local entities_1 = archetype_1.entities
 		for row_1 = #entities_1, 1, -1 or 1 do
 			do
+			end
+		end
+	end
+end
+return {
+	system0 = system0,
+}
+"
+`;
+
+exports[`scoped world queries with property access > should not crash when an invalid amount of components is used 1`] = `
+"-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+local A = TS.import(script, script.Parent, "ecs").A
+local query_1
+local archetypes_1
+local worldKey_1
+local function system0(info)
+	if worldKey_1 ~= info.world then
+		worldKey_1 = info.world
+		query_1 = info.world:query(A):cached()
+		archetypes_1 = query_1:archetypes()
+	end
+	for _, archetype_1 in archetypes_1 do
+		local entities_1 = archetype_1.entities
+		local field_1 = archetype_1.columns_map
+		local A_1 = field_1[A]
+		for row_1 = #entities_1, 1, -1 or 1 do
+			local e = entities_1[row_1]
+			local a = A_1[row_1]
+			local illegal = nil
+			do
+				local _ = illegal
 			end
 		end
 	end

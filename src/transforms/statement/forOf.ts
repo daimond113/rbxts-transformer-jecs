@@ -53,31 +53,50 @@ function inlineQueryIterators(
 
 	const [entity, ...componentIdentifiers] = declaration.name.elements
 
-	const cts = componentIdentifiers
-		.map((identifier, i) => [identifier, components[i]] as const)
-		.flatMap(([identifier, componentInstance]) =>
-			ts.isOmittedExpression(identifier) ? [] : [[identifier.name, componentInstance] as const],
-		)
-		.map(([identifier, componentInstance]) => {
-			const componentValueListIdentifier = ts.factory.getGeneratedNameForNode(componentInstance)
+	const cts: Cts = [
+		...componentIdentifiers
+			.slice(0, components.length)
+			.map((identifier, i) => [identifier, components[i]] as const)
+			.flatMap(([identifier, componentInstance]) =>
+				ts.isOmittedExpression(identifier) ? [] : [[identifier.name, componentInstance] as const],
+			)
+			.map(([identifier, componentInstance]) => {
+				const componentValueListIdentifier = ts.factory.getGeneratedNameForNode(componentInstance)
 
-			// roblox-ts would add + 1 here, so we cancel it out
-			const normalizedRow = ts.factory.createBinaryExpression(
-				row,
-				ts.factory.createToken(ts.SyntaxKind.MinusToken),
-				ts.factory.createNumericLiteral("1"),
-			)
-			// non-null to support noUncheckedIndexedAccess
-			const componentValue = ts.factory.createNonNullExpression(
-				ts.factory.createElementAccessExpression(componentValueListIdentifier, normalizedRow),
-			)
+				// roblox-ts would add + 1 here, so we cancel it out
+				const normalizedRow = ts.factory.createBinaryExpression(
+					row,
+					ts.factory.createToken(ts.SyntaxKind.MinusToken),
+					ts.factory.createNumericLiteral("1"),
+				)
+				// non-null to support noUncheckedIndexedAccess
+				const componentValue = ts.factory.createNonNullExpression(
+					ts.factory.createElementAccessExpression(componentValueListIdentifier, normalizedRow),
+				)
+
+				return [
+					componentInstance,
+					componentValueListIdentifier,
+					ts.factory.createVariableDeclaration(identifier, undefined, undefined, componentValue),
+				] as const
+			}),
+		...componentIdentifiers.slice(components.length).flatMap((identifier) => {
+			if (ts.isOmittedExpression(identifier)) return []
 
 			return [
-				componentInstance,
-				componentValueListIdentifier,
-				ts.factory.createVariableDeclaration(identifier, undefined, undefined, componentValue),
+				[
+					undefined,
+					undefined,
+					ts.factory.createVariableDeclaration(
+						identifier.name,
+						undefined,
+						undefined,
+						ts.factory.createIdentifier("undefined"),
+					),
+				],
 			] as const
-		})
+		}),
+	]
 
 	let brokenVariable: ts.Identifier | undefined
 
@@ -103,7 +122,6 @@ function inlineQueryIterators(
 	const statement = ts.visitEachChild(node.statement, fixBreak, state.context)
 
 	return outerLoop(
-		row,
 		entities,
 		archetype,
 		archetypes,
@@ -114,13 +132,16 @@ function inlineQueryIterators(
 	)
 }
 
+type Cts = ReadonlyArray<
+	readonly [...([ts.Expression, ts.Identifier] | [undefined, undefined]), ts.VariableDeclaration]
+>
+
 function outerLoop(
-	row: ts.Identifier,
 	entities: ts.Identifier,
 	archetype: ts.Identifier,
 	archetypes: ts.Expression,
 	field: ts.Identifier,
-	cts: ReadonlyArray<readonly [ts.Expression, ts.Identifier, ts.VariableDeclaration]>,
+	cts: Cts,
 	innerLoop: ts.Statement,
 	brokenVariable: ts.Identifier | undefined,
 ): ts.Statement {
@@ -154,15 +175,19 @@ function outerLoop(
 							ts.factory.createIdentifier("columns_map"),
 						),
 					),
-					...cts.map(([componentInstance, componentValueListIdentifier]) =>
-						ts.factory.createVariableDeclaration(
-							componentValueListIdentifier,
-							undefined,
-							undefined,
-							ts.factory.createNonNullExpression(
-								ts.factory.createElementAccessExpression(field, componentInstance),
-							),
-						),
+					...cts.flatMap(([componentInstance, componentValueListIdentifier]) =>
+						componentInstance
+							? [
+									ts.factory.createVariableDeclaration(
+										componentValueListIdentifier,
+										undefined,
+										undefined,
+										ts.factory.createNonNullExpression(
+											ts.factory.createElementAccessExpression(field, componentInstance),
+										),
+									),
+								]
+							: [],
 					),
 				],
 				ts.NodeFlags.Const,
@@ -204,7 +229,7 @@ function innerLoop(
 	row: ts.Identifier,
 	entities: ts.Identifier,
 	entity: ts.ArrayBindingElement,
-	cts: ReadonlyArray<readonly [ts.Expression, ts.Identifier, ts.VariableDeclaration]>,
+	cts: Cts,
 	statements: ts.Statement | ts.Statement[],
 ): ts.Statement {
 	const rowDecl = ts.factory.createVariableDeclarationList(

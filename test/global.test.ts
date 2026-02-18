@@ -90,6 +90,11 @@ const sharedCases = {
 		const q2 = q1.with(C)
 		for (const [e, a] of q2) {}
 	`,
+	"should not crash when an invalid amount of components is used": `
+		for (const [e, a, illegal] of world.query(A)) {
+			const _ = illegal
+		}
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {
