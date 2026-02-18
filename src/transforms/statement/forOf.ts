@@ -52,6 +52,33 @@ function inlineQueryIterators(
 	const row = ts.factory.createUniqueName("row")
 
 	const [entity, ...componentIdentifiers] = declaration.name.elements
+	const declFlags = node.initializer.flags & ts.NodeFlags.Let ? ts.NodeFlags.Let : ts.NodeFlags.Const
+
+	const entityDecl = !ts.isOmittedExpression(entity)
+		? ts.factory.createVariableStatement(
+				undefined,
+				ts.factory.createVariableDeclarationList(
+					[
+						ts.factory.createVariableDeclaration(
+							entity.name,
+							undefined,
+							undefined,
+							ts.factory.createNonNullExpression(
+								ts.factory.createElementAccessExpression(
+									entities,
+									ts.factory.createBinaryExpression(
+										row,
+										ts.factory.createToken(ts.SyntaxKind.MinusToken),
+										ts.factory.createNumericLiteral("1"),
+									),
+								),
+							),
+						),
+					],
+					declFlags,
+				),
+			)
+		: undefined
 
 	const cts: Cts = [
 		...componentIdentifiers
@@ -77,7 +104,13 @@ function inlineQueryIterators(
 				return [
 					componentInstance,
 					componentValueListIdentifier,
-					ts.factory.createVariableDeclaration(identifier, undefined, undefined, componentValue),
+					ts.factory.createVariableStatement(
+						undefined,
+						ts.factory.createVariableDeclarationList(
+							[ts.factory.createVariableDeclaration(identifier, undefined, undefined, componentValue)],
+							declFlags,
+						),
+					),
 				] as const
 			}),
 		...componentIdentifiers.slice(components.length).flatMap((identifier) => {
@@ -87,11 +120,19 @@ function inlineQueryIterators(
 				[
 					undefined,
 					undefined,
-					ts.factory.createVariableDeclaration(
-						identifier.name,
+					ts.factory.createVariableStatement(
 						undefined,
-						undefined,
-						ts.factory.createIdentifier("undefined"),
+						ts.factory.createVariableDeclarationList(
+							[
+								ts.factory.createVariableDeclaration(
+									identifier.name,
+									undefined,
+									undefined,
+									ts.factory.createIdentifier("undefined"),
+								),
+							],
+							declFlags,
+						),
 					),
 				],
 			] as const
@@ -127,14 +168,12 @@ function inlineQueryIterators(
 		archetypes,
 		field,
 		cts,
-		innerLoop(row, entities, entity, cts, state.transform(statement)),
+		innerLoop(row, entities, entityDecl, cts, state.transform(statement)),
 		brokenVariable,
 	)
 }
 
-type Cts = ReadonlyArray<
-	readonly [...([ts.Expression, ts.Identifier] | [undefined, undefined]), ts.VariableDeclaration]
->
+type Cts = ReadonlyArray<readonly [...([ts.Expression, ts.Identifier] | [undefined, undefined]), ts.VariableStatement]>
 
 function outerLoop(
 	entities: ts.Identifier,
@@ -228,7 +267,7 @@ function outerLoop(
 function innerLoop(
 	row: ts.Identifier,
 	entities: ts.Identifier,
-	entity: ts.ArrayBindingElement,
+	entityDecl: ts.VariableStatement | undefined,
 	cts: Cts,
 	statements: ts.Statement | ts.Statement[],
 ): ts.Statement {
@@ -247,41 +286,7 @@ function innerLoop(
 		ts.factory.createPrefixUnaryExpression(ts.SyntaxKind.MinusToken, ts.factory.createNumericLiteral("1")),
 	])
 
-	const entityDecl =
-		!ts.isOmittedExpression(entity) &&
-		ts.factory.createVariableStatement(
-			undefined,
-			ts.factory.createVariableDeclarationList(
-				[
-					ts.factory.createVariableDeclaration(
-						entity.name,
-						undefined,
-						undefined,
-						ts.factory.createNonNullExpression(
-							ts.factory.createElementAccessExpression(
-								entities,
-								ts.factory.createBinaryExpression(
-									row,
-									ts.factory.createToken(ts.SyntaxKind.MinusToken),
-									ts.factory.createNumericLiteral("1"),
-								),
-							),
-						),
-					),
-				],
-				ts.NodeFlags.Const,
-			),
-		)
-
-	const ctsDecls = cts.length
-		? ts.factory.createVariableStatement(
-				undefined,
-				ts.factory.createVariableDeclarationList(
-					cts.map(([, , decl]) => decl),
-					ts.NodeFlags.Const,
-				),
-			)
-		: undefined
+	const ctsDecls = cts.length ? cts.map(([, , stmt]) => stmt) : []
 
 	const unpackedStatements = Array.isArray(statements) && statements.length === 1 ? statements[0] : statements
 
@@ -292,7 +297,7 @@ function innerLoop(
 		ts.factory.createBlock(
 			[
 				...(entityDecl ? [entityDecl] : []),
-				...(ctsDecls ? [ctsDecls] : []),
+				...ctsDecls,
 				Array.isArray(unpackedStatements)
 					? ts.factory.createBlock(unpackedStatements, true)
 					: unpackedStatements,

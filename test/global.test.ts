@@ -95,6 +95,14 @@ const sharedCases = {
 			const _ = illegal
 		}
 	`,
+	"should support let destructuring": `
+		for (let [e, a, b, illegal] of world.query(A, B)) {
+			e = world.entity()
+			a = ""
+			b = 15
+			illegal = ""
+		}
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {
