@@ -103,6 +103,14 @@ const sharedCases = {
 			illegal = ""
 		}
 	`,
+	"should consider modifier components for placement": `
+		// create the worldKey if here
+		for (const [e] of world.query(A)) {}
+
+		const myEntity = world.entity()
+
+		for (const [e] of world.query(A).with(myEntity)) {}
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {

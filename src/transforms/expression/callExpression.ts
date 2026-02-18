@@ -13,10 +13,10 @@ export function transformCallExpression(
 	state: TransformState,
 	expression: ts.CallExpression,
 ): ts.Expression | undefined {
-	return transformQuery(state, expression)
+	return cacheQuery(state, expression)
 }
 
-function transformQuery(state: TransformState, expression: ts.CallExpression): ts.Expression | undefined {
+function cacheQuery(state: TransformState, expression: ts.CallExpression): ts.Expression | undefined {
 	if (getLeadingTrivia(expression).includes("no-cache")) return
 	const signature = state.typeChecker.getResolvedSignature(expression)
 	if (!signature) return
@@ -36,7 +36,7 @@ function transformQuery(state: TransformState, expression: ts.CallExpression): t
 	}
 	if (!ts.isForOfStatement(parent)) return
 
-	const [valid, componentDecls, queryComponents] = parseQuery(state, queryCreation)
+	const [valid, componentDecls, queryComponents] = parseQuery(state, parent.expression as ts.CallExpression)
 	if (!valid) {
 		if (!state.config.silent) {
 			console.warn(
