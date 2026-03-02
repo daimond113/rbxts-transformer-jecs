@@ -113,7 +113,7 @@ const sharedCases = {
 	`,
 	"should cache a query used in an if statement": `
 		if (world.query(pair(A, B)).iter()()[0] !== undefined) {}
-	`
+	`,
 }
 
 describe("scoped world queries with destructuring parameter", () => {

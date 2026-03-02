@@ -28,7 +28,10 @@ function cacheQuery(state: TransformState, expression: ts.CallExpression): ts.Ex
 	if (!queryCreation) return
 
 	let queryExpression = queryCreation
-	while (ts.isPropertyAccessExpression(queryExpression.parent) && ts.isCallExpression(queryExpression.parent.parent)) {
+	while (
+		ts.isPropertyAccessExpression(queryExpression.parent) &&
+		ts.isCallExpression(queryExpression.parent.parent)
+	) {
 		const symbol = state.typeChecker.getSymbolAtLocation(queryExpression.parent)
 		// if the query is manually cached, do not cache it again
 		if (symbol && genericSymbolsAreEqual(symbol, state.jecs.query.cached)) return
