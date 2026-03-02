@@ -81,7 +81,7 @@ const sharedCases = {
 		for (const [e2] of world.query(A, B)) {}
 		`,
 	],
-	"shouldn't cache a query that is used outside a loop": `
+	"shouldn't cache a query that is declared in a variable": `
 		const q = world.query(A, B)
 		for (const [e, a] of q) {}
 	`,
@@ -111,6 +111,9 @@ const sharedCases = {
 
 		for (const [e] of world.query(A).with(myEntity)) {}
 	`,
+	"should cache a query used in an if statement": `
+		if (world.query(pair(A, B)).iter()()[0] !== undefined) {}
+	`
 }
 
 describe("scoped world queries with destructuring parameter", () => {
