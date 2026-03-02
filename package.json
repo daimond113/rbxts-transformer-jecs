@@ -1,6 +1,6 @@
 {
   "name": "rbxts-transformer-jecs",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A roblox-ts transformer for Jecs",
   "main": "out/src/index.js",
   "type": "module",
